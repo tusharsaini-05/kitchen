@@ -49,17 +49,23 @@ CREATE POLICY "Anyone can view menu items" ON public.menu_items
     FOR SELECT USING (true);
 
 CREATE POLICY "Admins can manage menu items" ON public.menu_items
-    FOR ALL USING (auth.role() = 'admin');
+    FOR ALL USING (EXISTS (
+        SELECT 1 FROM public.users WHERE user_id = auth.uid() AND role = 'admin'
+    ));
 
--- Orders Table Policies
+-- Orders policies
 CREATE POLICY "Users can view their own orders" ON public.orders
     FOR SELECT USING (auth.uid() = user_id);
-
 CREATE POLICY "Order takers can create orders" ON public.orders
-    FOR INSERT WITH CHECK (auth.role() IN ('admin', 'order_taker'));
-
+    FOR INSERT WITH CHECK (EXISTS (
+        SELECT 1 FROM public.users 
+        WHERE user_id = auth.uid() AND role IN ('admin', 'order_taker')
+    ));
 CREATE POLICY "Order receivers can update order status" ON public.orders
-    FOR UPDATE USING (auth.role() IN ('admin', 'order_receiver'));
+    FOR UPDATE USING (EXISTS (
+        SELECT 1 FROM public.users 
+        WHERE user_id = auth.uid() AND role IN ('admin', 'order_receiver')
+    ));
 
 -- Insert default menu items
 INSERT INTO public.menu_items (name_en, name_th, price, category) VALUES
@@ -68,3 +74,4 @@ INSERT INTO public.menu_items (name_en, name_th, price, category) VALUES
     ('Som Tam', 'ส้มตำ', 60.00, 'appetizer'),
     ('Mango Sticky Rice', 'ข้าวเหนียวมะม่วง', 80.00, 'dessert'),
     ('Thai Iced Tea', 'ชาเย็น', 40.00, 'beverage');
+
