@@ -25,7 +25,7 @@ class OrderService {
           items: order.items,
           total: order.total,
           status: 'pending',
-          user_id: userProfile.id,
+          user_id: order.userId,
           timestamp: new Date().toISOString()
         });
 
@@ -43,7 +43,8 @@ class OrderService {
         .select('*, users(name)')
         .eq('status', 'pending')
         .order('timestamp', { ascending: true });
-
+        
+        
       if (error) throw error;
 
       return (data || []).map(order => ({
