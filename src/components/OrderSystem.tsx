@@ -77,8 +77,9 @@ export const OrderSystem: React.FC = () => {
         total: calculateTotal(),
         timestamp: new Date().toISOString(),
         status: 'pending' as const,
-        userId: user.id
+        userId: user.user_id
       };
+      
 
       await orderService.submitOrder(order);
       setOrderItems([]);

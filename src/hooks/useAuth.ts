@@ -28,6 +28,7 @@ export const useAuth = () => {
       setLoading(true);
       setError(null);
       const user = await authService.signIn(email, password);
+      
       setUser(user);
       return user;
     } catch (err: any) {

@@ -25,6 +25,7 @@ export interface User {
   role: 'admin' | 'order_taker' | 'order_receiver';
   name: string;
   created_at: string;
+  user_id:string
 }
 
 export interface DashboardStats {
