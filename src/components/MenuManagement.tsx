@@ -21,6 +21,7 @@ import {
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useMenu } from '../hooks/useMenu';
 import { formatCurrency } from '../utils/date/dateHelpers';
+import LoadingSpinner from './common/LoadingSpinner';
 
 export const MenuManagement: React.FC = () => {
   const { items, loading, error, addMenuItem, deleteMenuItem } = useMenu();
@@ -56,7 +57,7 @@ export const MenuManagement: React.FC = () => {
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Typography>Loading...</Typography>
+       <LoadingSpinner/>
       </Container>
     );
   }

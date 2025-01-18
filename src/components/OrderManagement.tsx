@@ -21,7 +21,7 @@ import { Delete as DeleteIcon, FileDownload } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { orderService } from '../services/order/orderService';
 import { Order } from '../types';
-import { LoadingSpinner } from './common/LoadingSpinner';
+import LoadingSpinner from './common/LoadingSpinner';
 import { ErrorMessage } from './common/ErrorMessage';
 import { exportOrders } from '../utils/export/orderExport';
 import { formatCurrency } from '../utils/date/dateHelpers';

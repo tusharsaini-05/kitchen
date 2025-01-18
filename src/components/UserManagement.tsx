@@ -24,7 +24,7 @@ import {
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { userService } from '../services/user/userService';
 import { User } from '../types';
-import { LoadingSpinner } from './common/LoadingSpinner';
+import LoadingSpinner from './common/LoadingSpinner';
 import { ErrorMessage } from './common/ErrorMessage';
 import { format } from 'date-fns';
 
