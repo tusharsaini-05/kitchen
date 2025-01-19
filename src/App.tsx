@@ -72,7 +72,10 @@ import { OrderManagement } from './components/OrderManagement';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import LoadingSpinner from './components/common/LoadingSpinner';
-import {User} from './types'
+
+
+
+import { HotelManagement } from './components/HotelManagement';
 
 
 function App() {
@@ -105,6 +108,11 @@ function App() {
             <Route path="/users" element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <UserManagement />
+              </ProtectedRoute>
+            } />
+              <Route path="/hotel-management" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <HotelManagement />
               </ProtectedRoute>
             } />
             <Route path="/menu" element={

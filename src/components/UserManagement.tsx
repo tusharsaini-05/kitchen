@@ -38,6 +38,7 @@ export const UserManagement: React.FC = () => {
     email: '',
     password: '',
     name: '',
+    hotelName: '', // New field added for hotel name
     role: 'order_taker' as User['role'],
   });
 
@@ -64,7 +65,8 @@ export const UserManagement: React.FC = () => {
         newUser.email,
         newUser.password,
         newUser.role,
-        newUser.name
+        newUser.name,
+        newUser.hotelName // Include hotel name when creating a user
       );
       setOpen(false);
       setSuccessMessage('User created successfully');
@@ -73,6 +75,7 @@ export const UserManagement: React.FC = () => {
         email: '',
         password: '',
         name: '',
+        hotelName: '',
         role: 'order_taker',
       });
     } catch (err: any) {
@@ -120,6 +123,7 @@ export const UserManagement: React.FC = () => {
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Role</TableCell>
+                <TableCell>Hotel Name</TableCell> {/* Add Hotel Name column */}
                 <TableCell>Created At</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
@@ -130,6 +134,7 @@ export const UserManagement: React.FC = () => {
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
+                  <TableCell>{user.hotelName || 'N/A'}</TableCell> {/* Show hotel name */}
                   <TableCell>
                     {format(new Date(user.created_at), 'dd/MM/yyyy')}
                   </TableCell>
@@ -176,6 +181,17 @@ export const UserManagement: React.FC = () => {
             value={newUser.password}
             onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
           />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Hotel Name</InputLabel>
+            <Select
+              value={newUser.hotelName}
+              onChange={(e) => setNewUser({ ...newUser, hotelName: e.target.value })}
+            >
+              <MenuItem value="Hotel A">Hotel A</MenuItem>
+              <MenuItem value="Hotel B">Hotel B</MenuItem>
+              <MenuItem value="Hotel C">Hotel C</MenuItem>
+            </Select>
+          </FormControl>
           <FormControl fullWidth margin="dense">
             <InputLabel>Role</InputLabel>
             <Select
