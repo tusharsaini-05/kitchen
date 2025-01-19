@@ -26,6 +26,8 @@ class OrderService {
           total: order.total,
           status: 'pending',
           user_id: order.userId,
+          room_no:order.roomNumber,
+          hotel:order.hotel,
           timestamp: new Date().toISOString()
         });
 
@@ -38,13 +40,41 @@ class OrderService {
 
   async getPendingOrders(): Promise<Order[]> {
     try {
+      const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+      if (sessionError) throw new Error('Authentication error');
+      if (!user) throw new Error('No active session');
+
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('id,hotel')
+        .eq('email', user.email)
+        .single();
+
+      if (userError || !userProfile) {
+        throw new Error('User profile not found');
+      }
+      if(userProfile.hotel == 'all'){
+         const { data, error } = await supabase
+           .from('orders')
+           .select('*, users(name)')
+           .eq('status', 'pending')
+           .order('timestamp', { ascending: true });
+        if (error) throw error;
+
+        return (data || []).map(order => ({
+           ...order,
+           userId: order.user_id,
+           userName: order.users?.name
+        }));
+      }
+    
       const { data, error } = await supabase
         .from('orders')
         .select('*, users(name)')
         .eq('status', 'pending')
+        .eq('hotel',userProfile.hotel)
         .order('timestamp', { ascending: true });
-        
-        
+  
       if (error) throw error;
 
       return (data || []).map(order => ({

@@ -91,8 +91,10 @@ export const OrderSystem: React.FC = () => {
         timestamp: new Date().toISOString(),
         status: "pending" as const,
         userId: user.user_id,
+        hotel:user.hotel,
         roomNumber, // Include room number in the order
       };
+    
 
       await orderService.submitOrder(order);
       setOrderItems([]);

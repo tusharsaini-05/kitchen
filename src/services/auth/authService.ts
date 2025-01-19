@@ -17,7 +17,6 @@ class AuthService {
         .select('*')
         .eq('email', email)
         .single();
-      console.log(profile)
 
       if (profileError) throw new Error('User profile not found');
       if (!profile) throw new Error('No profile data returned');
@@ -28,7 +27,8 @@ class AuthService {
         name: profile.name,
         role: profile.role,
         created_at: profile.created_at,
-        user_id:profile.user_id
+        user_id:profile.user_id,
+        hotel:profile.hotel
       };
     } catch (error: any) {
       console.error('Sign in error:', error);
@@ -55,7 +55,8 @@ class AuthService {
         name: profile.name,
         role: profile.role,
         created_at: profile.created_at,
-        user_id:profile.user_id
+        user_id:profile.user_id,
+        hotel:profile.hotel
       };
     } catch (error) {
       console.error('Get current user error:', error);

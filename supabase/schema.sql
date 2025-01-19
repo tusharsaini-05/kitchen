@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
     total DECIMAL(10,2) NOT NULL CHECK (total >= 0),
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed')),
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
-    user_id UUID NOT NULL REFERENCES public.users(id)
+    user_id UUID NOT NULL REFERENCES public.users(user_id)
 );
 
 -- Enable Row Level Security (RLS)

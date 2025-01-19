@@ -21,10 +21,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (!user) {
     return <Navigate to="/login" />;
   }
-
+   
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/dashboard" />;
   }
-
+  else
+     
   return children || <Outlet />;
 };
