@@ -17,6 +17,8 @@ export interface Order {
   timestamp: string;
   status: 'pending' | 'completed';
   userId: string;
+  hotel:string;
+  roomNumber:string;
 }
 
 export interface User {
@@ -25,7 +27,8 @@ export interface User {
   role: 'admin' | 'order_taker' | 'order_receiver';
   name: string;
   created_at: string;
-  user_id:string
+  user_id:string;
+  hotel:string;
 }
 
 export interface DashboardStats {

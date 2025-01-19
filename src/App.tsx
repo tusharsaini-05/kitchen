@@ -59,7 +59,7 @@
 
 // export default App;
 
-import React from 'react';
+import React, { useState,useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import { Login } from './components/Login';
@@ -72,6 +72,8 @@ import { OrderManagement } from './components/OrderManagement';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import LoadingSpinner from './components/common/LoadingSpinner';
+import {User} from './types'
+
 
 function App() {
   const { user, loading } = useAuth();
@@ -84,7 +86,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
+        <Route path="/login" element={!user ? <Login /> : <Navigate to='/dashboard' />} />
         
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
