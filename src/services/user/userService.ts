@@ -17,18 +17,38 @@ class UserService {
     }
   }
 
-  async createUser(email: string, password: string, role: string, name: string): Promise<void> {
+  async createUser(email: string, password: string, role: string, name: string, hotelName: string): Promise<void> {
     try {
       // First create the auth user
       const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email,
         password,
         email_confirm: true,
-        user_metadata: { role, name }
+        user_metadata: { role, name,hotelName }
       });
+
 
       if (authError) throw authError;
       if (!authData.user) throw new Error('Failed to create auth user');
+      var id = "";
+      const { data, error } = await supabase.auth.admin.listUsers();
+      data.users.forEach((value, index) => {
+        if(value.email == email){
+          id = value.id;
+        }
+      });
+      await supabase
+        .from('users')
+        .insert({
+          name:name,
+          user_id:id,
+          email:email,
+          role:role,
+          hotel:hotelName,
+          created_at:new Date().toISOString()
+        })
+      console.log(data);
+      
 
       // The trigger will automatically create the user profile
     } catch (error: any) {
