@@ -134,7 +134,7 @@ export const UserManagement: React.FC = () => {
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
-                  <TableCell>{user.hotelName || 'N/A'}</TableCell> {/* Show hotel name */}
+                  <TableCell>{user.hotel || 'N/A'}</TableCell> {/* Show hotel name */}
                   <TableCell>
                     {format(new Date(user.created_at), 'dd/MM/yyyy')}
                   </TableCell>
