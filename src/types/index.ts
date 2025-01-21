@@ -38,3 +38,6 @@ export interface DashboardStats {
   ordersByCategory: { category: string; count: number }[];
   revenueByDay: { date: string; revenue: number }[];
 }
+export interface OrderReceiverProps {
+  role: string; // Role is a string value
+}
