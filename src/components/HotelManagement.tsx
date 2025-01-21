@@ -9,10 +9,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   Table,
   TableBody,
   TableCell,
@@ -26,14 +22,13 @@ import { format } from 'date-fns';
 
 export const HotelManagement: React.FC = () => {
   const [hotels, setHotels] = useState<
-    { id: string; hotelId: string; hotelName: string; created_at: string }[]
+    { id: string; hotelName: string; created_at: string }[]
   >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [newHotel, setNewHotel] = useState({
-    hotelId: '',
     hotelName: '',
   });
 
@@ -45,13 +40,11 @@ export const HotelManagement: React.FC = () => {
       const mockHotels = [
         {
           id: '1',
-          hotelId: 'hotelA',
           hotelName: 'Hotel A',
           created_at: new Date().toISOString(),
         },
         {
           id: '2',
-          hotelId: 'hotelB',
           hotelName: 'Hotel B',
           created_at: new Date().toISOString(),
         },
@@ -74,14 +67,13 @@ export const HotelManagement: React.FC = () => {
     try {
       const newHotelEntry = {
         id: String(hotels.length + 1),
-        hotelId: newHotel.hotelId,
         hotelName: newHotel.hotelName,
         created_at: new Date().toISOString(),
       };
       setHotels([...hotels, newHotelEntry]);
       setOpen(false);
       setSuccessMessage('Hotel created successfully');
-      setNewHotel({ hotelId: '', hotelName: '' });
+      setNewHotel({ hotelName: '' });
     } catch (err: any) {
       setError('Failed to create hotel');
     }
@@ -130,7 +122,6 @@ export const HotelManagement: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Hotel ID</TableCell>
                 <TableCell>Hotel Name</TableCell>
                 <TableCell>Created At</TableCell>
                 <TableCell>Actions</TableCell>
@@ -139,9 +130,10 @@ export const HotelManagement: React.FC = () => {
             <TableBody>
               {hotels.map((hotel) => (
                 <TableRow key={hotel.id}>
-                  <TableCell>{hotel.hotelId}</TableCell>
                   <TableCell>{hotel.hotelName}</TableCell>
-                  <TableCell>{format(new Date(hotel.created_at), 'dd/MM/yyyy')}</TableCell>
+                  <TableCell>
+                    {format(new Date(hotel.created_at), 'dd/MM/yyyy')}
+                  </TableCell>
                   <TableCell>
                     <Button
                       startIcon={<DeleteIcon />}
@@ -171,19 +163,6 @@ export const HotelManagement: React.FC = () => {
               setNewHotel({ ...newHotel, hotelName: e.target.value })
             }
           />
-          <FormControl fullWidth margin="dense">
-            <InputLabel>Hotel ID</InputLabel>
-            <Select
-              value={newHotel.hotelId}
-              onChange={(e) =>
-                setNewHotel({ ...newHotel, hotelId: e.target.value })
-              }
-            >
-              <MenuItem value="hotelA">Hotel A</MenuItem>
-              <MenuItem value="hotelB">Hotel B</MenuItem>
-              <MenuItem value="hotelC">Hotel C</MenuItem>
-            </Select>
-          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>

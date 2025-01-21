@@ -131,6 +131,9 @@ export const OrderReceiver: React.FC<OrderReceiverProps> = ({role}) => {
                   <Typography color="textSecondary" gutterBottom>
                     {formatDate(order.timestamp)}
                   </Typography>
+                  <Typography color="textSecondary" gutterBottom>
+                    Room: {order.room_no || 'N/A'}
+                  </Typography>
 
                   <div className="space-y-2 my-3">
                     {order.items.map((item, index) => (

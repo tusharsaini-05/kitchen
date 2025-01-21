@@ -27,6 +27,8 @@ import {
 } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useAuth } from '../hooks/useAuth';
+import logo1 from  '../data/logo1.png';
+
 
 const drawerWidth = 240;
 
@@ -69,11 +71,19 @@ const Layout: React.FC = () => {
 
   const drawer = (
     <div>
-      <Toolbar>
-        <Typography variant="h6" noWrap component="div">
-          Nexus Overall
-        </Typography>
-      </Toolbar>
+     <Toolbar>
+  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <img 
+      src={logo1} // Replace with your logo's path
+      alt="Logo" 
+      style={{ width: '40px', height: '40px', marginRight: '8px' }} 
+    />
+    <Typography variant="h6" noWrap component="div">
+      Nexus Overall
+    </Typography>
+  </Box>
+</Toolbar>
+
       <List>
         {menuItems.map((item) => (
           <ListItem

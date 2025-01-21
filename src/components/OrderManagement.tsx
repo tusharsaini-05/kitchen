@@ -38,13 +38,12 @@ export const OrderManagement: React.FC = () => {
       setLoading(true);
       const [year, month] = selectedMonth.split('-');
       const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-      const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59); // Adjusted to include the entire last day of the month
+      const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59);
 
-      
       console.log('Fetching orders from:', startDate.toISOString(), 'to:', endDate.toISOString());
 
       const data = await orderService.getOrders(startDate, endDate);
-      console.log('Fetched orders:', data); // Debugging line
+      console.log('Fetched orders:', data);
 
       if (Array.isArray(data)) {
         setOrders(data);
@@ -79,18 +78,16 @@ export const OrderManagement: React.FC = () => {
     try {
       const [year, month] = selectedMonth.split('-');
       const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-      const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59); 
-  
+      const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59);
+
       const orders = await orderService.getOrders(startDate, endDate); // Fetch orders for the selected month
-  
+
       await exportOrders(new Date(parseInt(year), parseInt(month) - 1), orders); // Pass the fetched orders to export
       setSuccessMessage('Orders exported successfully');
     } catch (err: any) {
       setError(err.message || 'Failed to export orders');
     }
   };
-  
-  
 
   if (loading) return <LoadingSpinner />;
 
@@ -143,6 +140,7 @@ export const OrderManagement: React.FC = () => {
                 <TableCell>Status</TableCell>
                 <TableCell>Items</TableCell>
                 <TableCell>Total</TableCell>
+                <TableCell>Room No</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -169,6 +167,7 @@ export const OrderManagement: React.FC = () => {
                       ))}
                     </TableCell>
                     <TableCell>{formatCurrency(order.total)}</TableCell>
+                    <TableCell>{order.room_no || 'N/A'}</TableCell>
                     <TableCell>
                       <IconButton
                         color="error"
@@ -181,7 +180,7 @@ export const OrderManagement: React.FC = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
+                  <TableCell colSpan={7} align="center">
                     <Typography>No orders found for the selected month.</Typography>
                   </TableCell>
                 </TableRow>
