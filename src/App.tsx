@@ -79,7 +79,7 @@ import { HotelManagement } from './components/HotelManagement';
 
 
 function App() {
-  const { user, loading } = useAuth();
+  const { user, loading } =  useAuth();
 
   // Fix: Add a return statement to render LoadingSpinner if loading is true
   if (loading) {
@@ -96,8 +96,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/orders" element={<OrderSystem />} />
             <Route path="/order-receiver" element={
-              <ProtectedRoute allowedRoles={['admin', 'order_receiver']}>
-                <OrderReceiver />
+              <ProtectedRoute allowedRoles={['admin', 'order_receiver','order_taker']}>
+                <OrderReceiver role={user?.role || 'guest'}/>
               </ProtectedRoute>
             } />
             <Route path="/order-management" element={

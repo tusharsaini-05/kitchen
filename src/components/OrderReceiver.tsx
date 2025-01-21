@@ -19,11 +19,20 @@ import { formatDate, formatCurrency } from '../utils/date/dateHelpers';
 import { usePendingOrders } from '../hooks/usePendingOrders';
 import { exportOrders } from '../utils/export/orderExport';
 import { format } from 'date-fns';
+import { User } from '../types';
+import { useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { authService } from '../services/auth';
+import { OrderReceiverProps } from '../types';
 
-export const OrderReceiver: React.FC = () => {
+export const OrderReceiver: React.FC<OrderReceiverProps> = ({role}) => {
+
+  console.log(role)
+
   const { orders, loading, error, markAsCompleted } = usePendingOrders();
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
 
   const handleMarkAsCompleted = async (orderId: string) => {
     try {
@@ -44,7 +53,7 @@ export const OrderReceiver: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (loading || role == 'guest') {
     return (
       <Container>
         <Typography>Loading orders...</Typography>
@@ -145,7 +154,7 @@ export const OrderReceiver: React.FC = () => {
                     </div>
                   </div>
 
-                  {order.status === 'pending' && (
+                  {order.status === 'pending' && !(role == 'order_taker') && (
                     <Button
                       fullWidth
                       variant="contained"

@@ -46,7 +46,7 @@ const Layout: React.FC = () => {
   const menuItems = [
     { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard', roles: ['admin', 'order_taker', 'order_receiver'] },
     { text: 'Orders', icon: <Receipt />, path: '/orders', roles: ['admin', 'order_taker'] },
-    { text: 'Order Receiver', icon: <Restaurant />, path: '/order-receiver', roles: ['admin', 'order_receiver'] },
+    { text: 'Order Receiver', icon: <Restaurant />, path: '/order-receiver', roles: ['admin', 'order_receiver','order_taker'] },
     { text: 'Order Management', icon: <ListAlt />, path: '/order-management', roles: ['admin'] },
     { text: 'Menu Management', icon: <RestaurantMenu />, path: '/menu', roles: ['admin'] },
     { text: 'User Management', icon: <People />, path: '/users', roles: ['admin'] },
