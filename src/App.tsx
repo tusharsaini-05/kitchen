@@ -101,7 +101,7 @@ function App() {
             <Route path="/orders" element={<OrderSystem />} />
             <Route path="/order-receiver" element={
               <ProtectedRoute allowedRoles={['admin', 'order_receiver','order_taker']}>
-                <OrderReceiver role={user?.role || 'guest'}/>
+                 <OrderReceiver />
               </ProtectedRoute>
             } />
             <Route path="/order-management" element={

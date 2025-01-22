@@ -19,19 +19,20 @@ import { formatDate, formatCurrency } from '../utils/date/dateHelpers';
 import { usePendingOrders } from '../hooks/usePendingOrders';
 import { exportOrders } from '../utils/export/orderExport';
 import { format } from 'date-fns';
-import { User } from '../types';
-import { useEffect } from 'react';
+
 import { useAuth } from '../hooks/useAuth';
-import { authService } from '../services/auth';
-import { OrderReceiverProps } from '../types';
 
-export const OrderReceiver: React.FC<OrderReceiverProps> = ({role}) => {
 
+export const OrderReceiver: React.FC = () => {
+
+
+
+  const { user } = useAuth();
   const { orders, loading, error, markAsCompleted } = usePendingOrders();
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
-  console.log(orders)
+ 
   const handleMarkAsCompleted = async (orderId: string) => {
     try {
       await markAsCompleted(orderId);
@@ -51,7 +52,7 @@ export const OrderReceiver: React.FC<OrderReceiverProps> = ({role}) => {
     }
   };
 
-  if (loading || role == 'guest') {
+  if (loading) {
     return (
       <Container>
         <Typography>Loading orders...</Typography>
@@ -155,7 +156,7 @@ export const OrderReceiver: React.FC<OrderReceiverProps> = ({role}) => {
                     </div>
                   </div>
 
-                  {order.status === 'pending' && !(role == 'order_taker') && (
+                  {order.status === 'pending' && !(user?.role == 'order_taker') && (
                     <Button
                       fullWidth
                       variant="contained"
