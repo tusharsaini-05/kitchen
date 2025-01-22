@@ -132,7 +132,7 @@ export const OrderReceiver: React.FC<OrderReceiverProps> = ({role}) => {
                     {formatDate(order.timestamp)}
                   </Typography>
                   <Typography color="textSecondary" gutterBottom>
-                    Room: {order.roomNumber || 'N/A'}
+                    Room: {order.room_no || 'N/A'}
                   </Typography>
 
                   <div className="space-y-2 my-3">
