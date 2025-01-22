@@ -34,12 +34,15 @@ class HotelService {
     }
   }
 
-  async deleteHotel(hotel_name: string): Promise<void> {
+  async deleteHotel(id: string): Promise<void> {
     try {
+        console.log(id)
       const { error } = await supabase
         .from('hotels')
         .delete()
-        .eq('name', hotel_name);
+        .eq('id', id);
+
+        console.log(error)
 
       if (error) throw error;
     } catch (error: any) {

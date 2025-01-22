@@ -72,10 +72,10 @@ export const HotelManagement: React.FC = () => {
           id: crypto.randomUUID(),
           hotel_name: newHotel.hotelName,
           created_at: new Date().toISOString(),
+          
         };
         await hotelService.submitHotel(item);
         AddHotel(item);
-        setHotelItems([]);
         setSuccessMessage("hotel submitted successfully!");
       } catch (err: any) {
         setError(err.message || "Failed to add hotel");
