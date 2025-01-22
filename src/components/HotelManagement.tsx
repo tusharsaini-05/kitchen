@@ -19,75 +19,82 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { format } from 'date-fns';
+import { useAuth } from '../hooks/useAuth';
+import { Hotel } from '../types'
+import { hotelService } from '../services/hotel/hotelService';
 
 export const HotelManagement: React.FC = () => {
-  const [hotels, setHotels] = useState<
-    { id: string; hotelName: string; created_at: string }[]
-  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [newHotel, setNewHotel] = useState({
-    hotelName: '',
-  });
-
-  // Simulate fetching hotels (replace with real API call if needed)
-  const fetchHotels = async () => {
-    try {
-      setLoading(true);
-      // Mock data
-      const mockHotels = [
-        {
-          id: '1',
-          hotelName: 'Hotel A',
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          hotelName: 'Hotel B',
-          created_at: new Date().toISOString(),
-        },
-      ];
-      setHotels(mockHotels);
-      setError(null);
-    } catch (err: any) {
-      setError('Failed to fetch hotels');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchHotels();
-  }, []);
-
-  // Handle hotel creation
-  const handleSubmit = async () => {
-    try {
-      const newHotelEntry = {
-        id: String(hotels.length + 1),
-        hotelName: newHotel.hotelName,
-        created_at: new Date().toISOString(),
+  const [newHotel, setNewHotel] = useState({hotelName: ''});
+  
+    const [hotelItems, setHotelItems] = useState<Hotel[]>([]);
+    const [submitting, setSubmitting] = useState(false);
+    const { user } = useAuth();
+  
+    useEffect(() => {
+      const fetchHotelItems = async () => {
+        try {
+          const items = await hotelService.getHotels();
+          setHotelItems(items);
+        } catch (err) {
+          setError("Failed to load menu items");
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
       };
-      setHotels([...hotels, newHotelEntry]);
-      setOpen(false);
-      setSuccessMessage('Hotel created successfully');
-      setNewHotel({ hotelName: '' });
-    } catch (err: any) {
-      setError('Failed to create hotel');
-    }
-  };
+  
+      fetchHotelItems();
+    }, []);
+  
+    const AddHotel = (item: Hotel) => {
+      setHotelItems((prev) => {
+        return [...prev, { ...item }];
+      });
+    };
 
-  // Handle hotel deletion
-  const handleDelete = async (hotelId: string) => {
-    try {
-      setHotels(hotels.filter((hotel) => hotel.id !== hotelId));
-      setSuccessMessage('Hotel deleted successfully');
-    } catch (err: any) {
-      setError('Failed to delete hotel');
-    }
-  };
+  
+  
+    const handleSubmit = async () => {
+      if (!user || newHotel.hotelName.length == 0 || submitting) {
+        setError("Please fill the hotelName");
+        return;
+      }
+  
+      setSubmitting(true);
+      setError(null);
+  
+      try {
+        const item = {
+          id: crypto.randomUUID(),
+          hotel_name: newHotel.hotelName,
+          created_at: new Date().toISOString(),
+          
+        };
+        await hotelService.submitHotel(item);
+        AddHotel(item);
+        setSuccessMessage("hotel submitted successfully!");
+      } catch (err: any) {
+        setError(err.message || "Failed to add hotel");
+        console.error("hotel addition error:", err);
+      } finally {
+        setSubmitting(false);
+      }
+    };
+
+    const handleDelete = async (hotel_Id: string) => {
+        try {
+          await hotelService.deleteHotel(hotel_Id);
+          setSuccessMessage('Order deleted successfully');
+          setHotelItems((prev) => prev.filter((item) => item.id !== hotel_Id));
+        } catch (err: any) {
+          setError(err.message || 'Failed to delete order');
+        }
+      };
+  
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -128,9 +135,9 @@ export const HotelManagement: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {hotels.map((hotel) => (
+              {hotelItems.map((hotel) => (
                 <TableRow key={hotel.id}>
-                  <TableCell>{hotel.hotelName}</TableCell>
+                  <TableCell>{hotel.hotel_name}</TableCell>
                   <TableCell>
                     {format(new Date(hotel.created_at), 'dd/MM/yyyy')}
                   </TableCell>

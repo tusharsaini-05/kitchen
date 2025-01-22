@@ -16,7 +16,7 @@ export const OrderHistory: React.FC = () => {
     const endOfMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0);
 
     try {
-      const data = await storageService.getOrders(startOfMonth, endOfMonth);
+      const data = await storageService.orders.getOrders(startOfMonth, endOfMonth);
       setOrders(data);
     } catch (error) {
       console.error('Error fetching orders:', error);

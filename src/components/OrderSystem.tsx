@@ -92,7 +92,7 @@ export const OrderSystem: React.FC = () => {
         status: "pending" as const,
         userId: user.user_id,
         hotel:user.hotel,
-        roomNumber, // Include room number in the order
+        roomNumber:roomNumber, // Include room number in the order
       };
     
 

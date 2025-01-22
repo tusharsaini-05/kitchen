@@ -89,11 +89,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={!user ? <Login /> : <Navigate to='/dashboard' />} />
+      <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
         
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={         
+              <ProtectedRoute allowedRoles={['admin']}>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/orders" element={<OrderSystem />} />
             <Route path="/order-receiver" element={
               <ProtectedRoute allowedRoles={['admin', 'order_receiver','order_taker']}>
@@ -123,7 +127,7 @@ function App() {
           </Route>
         </Route>
 
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );
