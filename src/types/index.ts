@@ -18,7 +18,7 @@ export interface Order {
   status: 'pending' | 'completed';
   userId: string;
   hotel:string;
-  roomNumber:string;
+  room_no:string;
 }
 
 export interface User {

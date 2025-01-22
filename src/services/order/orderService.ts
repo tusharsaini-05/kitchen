@@ -26,7 +26,7 @@ class OrderService {
           total: order.total,
           status: 'pending',
           user_id: order.userId,
-          room_no:order.roomNumber,
+          room_no:order.room_no,
           hotel:order.hotel,
           timestamp: new Date().toISOString()
         });
