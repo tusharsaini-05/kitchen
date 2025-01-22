@@ -8,6 +8,7 @@ class UserService {
         .from('users')
         .select('*')
         .order('created_at', { ascending: false });
+        console.log(data)
 
       if (error) throw error;
       return data || [];
@@ -47,7 +48,6 @@ class UserService {
           hotel:hotelName,
           created_at:new Date().toISOString()
         })
-      console.log(data);
       
 
       // The trigger will automatically create the user profile
@@ -61,15 +61,24 @@ class UserService {
     try {
       const { data: user, error: userError } = await supabase
         .from('users')
-        .select('auth_user_id')
-        .eq('id', userId)
+        .select('user_id')
+        .eq('user_id', userId)
         .single();
+
 
       if (userError || !user) throw new Error('User not found');
 
+      const { error } = await supabase
+        .from('users')
+        .delete()
+        .eq('user_id', userId
+        );
+        if(error) throw error;
+
+
       // Delete auth user (this will cascade to the profile due to foreign key)
       const { error: deleteError } = await supabase.auth.admin.deleteUser(
-        user.auth_user_id
+        user.user_id
       );
 
       if (deleteError) throw deleteError;

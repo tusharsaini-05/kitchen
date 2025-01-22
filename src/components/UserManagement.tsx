@@ -129,7 +129,8 @@ export const UserManagement: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((user) => (
+              {users.filter((user) => user.role !== 'admin').map((user) => (
+      
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
@@ -142,7 +143,7 @@ export const UserManagement: React.FC = () => {
                     <Button
                       startIcon={<DeleteIcon />}
                       color="error"
-                      onClick={() => handleDelete(user.id)}
+                      onClick={() => handleDelete(user.user_id)}
                     >
                       Delete
                     </Button>
