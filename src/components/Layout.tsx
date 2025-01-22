@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
   AppBar,
   Box,
@@ -13,8 +13,10 @@ import {
   Toolbar,
   Typography,
   Button,
-  Switch,
-} from '@mui/material';
+  Select,
+  MenuItem,
+  FormControl,
+} from "@mui/material";
 import {
   Menu as MenuIcon,
   Dashboard,
@@ -24,11 +26,10 @@ import {
   RestaurantMenu,
   Logout,
   ListAlt,
-} from '@mui/icons-material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useAuth } from '../hooks/useAuth';
-import logo1 from  '../data/logo1.png';
-
+} from "@mui/icons-material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useAuth } from "../hooks/useAuth";
+import logo1 from "../data/logo1.png";
 
 const drawerWidth = 240;
 
@@ -38,51 +39,49 @@ const Layout: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [selectedHotel, setSelectedHotel] = useState("");
+  const hotels = [
+    { id: 1, name: "Hotel A" },
+    { id: 2, name: "Hotel B" },
+  ];
 
   const theme = createTheme({
     palette: {
-      mode: darkMode ? 'dark' : 'light',
+      mode: darkMode ? "dark" : "light",
     },
   });
 
   const menuItems = [
-    { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard', roles: ['admin'] },
-    { text: 'Orders', icon: <Receipt />, path: '/orders', roles: ['admin', 'order_taker'] },
-    { text: 'Order Receiver', icon: <Restaurant />, path: '/order-receiver', roles: ['admin', 'order_receiver','order_taker'] },
-    { text: 'Order Management', icon: <ListAlt />, path: '/order-management', roles: ['admin'] },
-    { text: 'Menu Management', icon: <RestaurantMenu />, path: '/menu', roles: ['admin'] },
-    { text: 'User Management', icon: <People />, path: '/users', roles: ['admin'] },
-    { text: 'Hotel Management', icon: <People />, path: '/hotel-management', roles: ['admin'] },
-].filter(item => item.roles.includes(user?.role || ''));
- 
+    { text: "Dashboard", icon: <Dashboard />, path: "/dashboard", roles: ["admin"] },
+    { text: "Orders", icon: <Receipt />, path: "/orders", roles: ["admin", "order_taker"] },
+    { text: "Order Receiver", icon: <Restaurant />, path: "/order-receiver", roles: ["admin", "order_receiver", "order_taker"] },
+    { text: "Order Management", icon: <ListAlt />, path: "/order-management", roles: ["admin"] },
+    { text: "Menu Management", icon: <RestaurantMenu />, path: "/menu", roles: ["admin"] },
+    { text: "User Management", icon: <People />, path: "/users", roles: ["admin"] },
+    { text: "Hotel Management", icon: <People />, path: "/hotel-management", roles: ["admin"] },
+  ].filter((item) => item.roles.includes(user?.role || ""));
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/login');
-  };
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+    navigate("/login");
   };
 
   const drawer = (
     <div>
-     <Toolbar>
-  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-    <img 
-      src={logo1} // Replace with your logo's path
-      alt="Logo" 
-      style={{ width: '40px', height: '40px', marginRight: '8px' }} 
-    />
-    <Typography variant="h6" noWrap component="div">
-      Nexus Overall
-    </Typography>
-  </Box>
-</Toolbar>
+      <Toolbar>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <img
+            src={logo1 || "/placeholder.svg"}
+            alt="Logo"
+            style={{ width: "40px", height: "40px", marginRight: "8px" }}
+          />
+          <Typography variant="h6" noWrap>
+            Nexus Overall
+          </Typography>
+        </Box>
+      </Toolbar>
 
       <List>
         {menuItems.map((item) => (
@@ -92,25 +91,21 @@ const Layout: React.FC = () => {
             onClick={() => navigate(item.path)}
             selected={location.pathname === item.path}
             sx={{
-              borderRadius: '8px',
-              marginBottom: '8px',
-              '&.Mui-selected': {
-                backgroundColor: '#004d73',
-                color: '#ffffff',
-                '& .MuiListItemIcon-root': {
-                  color: '#ffffff',
-                },
+              borderRadius: "8px",
+              marginBottom: "8px",
+              "&.Mui-selected": {
+                backgroundColor: "#004d73",
+                color: "#ffffff",
+                "& .MuiListItemIcon-root": { color: "#ffffff" },
               },
-              '&:hover': {
-                backgroundColor: '#004d73',
-                color: '#ffffff',
-                '& .MuiListItemIcon-root': {
-                  color: '#ffffff',
-                },
+              "&:hover": {
+                backgroundColor: "#004d73",
+                color: "#ffffff",
+                "& .MuiListItemIcon-root": { color: "#ffffff" },
               },
             }}
           >
-            <ListItemIcon sx={{ color: 'inherit' }}>{item.icon}</ListItemIcon>
+            <ListItemIcon sx={{ color: "inherit" }}>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
@@ -120,15 +115,14 @@ const Layout: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar
           position="fixed"
           sx={{
             width: { sm: `calc(100% - ${drawerWidth}px)` },
             ml: { sm: `${drawerWidth}px` },
-            backgroundColor: darkMode ? '#212121' : '#004d73',
-            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)',
+            backgroundColor: darkMode ? "#212121" : "#004d73",
           }}
         >
           <Toolbar>
@@ -137,48 +131,74 @@ const Layout: React.FC = () => {
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { sm: 'none' } }}
+              sx={{ mr: 2, display: { sm: "none" } }}
             >
               <MenuIcon />
             </IconButton>
             <Typography
               variant="h6"
               noWrap
-              component="div"
               sx={{
                 flexGrow: 1,
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                color: '#ffffff',
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                color: "#ffffff",
               }}
             >
               Kitchen Order Management System
             </Typography>
             <IconButton
               color="inherit"
-              onClick={toggleDarkMode}
-              sx={{ mr: 2 }}
-            >
-              {darkMode ? '🌙' : '🌞'}
-            </IconButton>
-            <Typography
-              variant="body1"
+              onClick={() => setDarkMode(!darkMode)}
               sx={{
                 mr: 2,
-                color: 'rgba(255, 255, 255, 0.8)',
-                fontStyle: 'italic',
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                },
               }}
             >
-              {user?.name}
-            </Typography>
+              {darkMode ? "🌞" : "🌙"}
+            </IconButton>
+            {user?.role === "admin" ? (
+              <FormControl sx={{ minWidth: 120, mr: 2 }}>
+                <Select
+                  value={selectedHotel}
+                  onChange={(e) => setSelectedHotel(e.target.value)}
+                  displayEmpty
+                  sx={{ color: "white", "& .MuiSelect-icon": { color: "white" } }}
+                >
+                  <MenuItem value="">
+                    <em>All Hotels</em>
+                  </MenuItem>
+                  {hotels.map((hotel) => (
+                    <MenuItem key={hotel.id} value={hotel.name}>
+                      {hotel.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ) : (
+              <Typography
+                variant="body1"
+                sx={{
+                  mr: 2,
+                  color: "rgba(255, 255, 255, 0.8)",
+                  fontStyle: "italic",
+
+                }}
+              >
+                {user?.hotel}
+              </Typography>
+            )}
             <Button
               color="inherit"
               onClick={handleSignOut}
               startIcon={<Logout />}
               sx={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
                 },
               }}
             >
@@ -186,23 +206,18 @@ const Layout: React.FC = () => {
             </Button>
           </Toolbar>
         </AppBar>
-        <Box
-          component="nav"
-          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        >
+        <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
           <Drawer
             variant="temporary"
             open={mobileOpen}
             onClose={handleDrawerToggle}
-            ModalProps={{
-              keepMounted: true,
-            }}
+            ModalProps={{ keepMounted: true }}
             sx={{
-              display: { xs: 'block', sm: 'none' },
-              '& .MuiDrawer-paper': {
-                boxSizing: 'border-box',
+              display: { xs: "block", sm: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
                 width: drawerWidth,
-                backgroundColor: darkMode ? '#333' : '#f4f4f4',
+                backgroundColor: darkMode ? "#333" : "#f4f4f4",
               },
             }}
           >
@@ -211,11 +226,11 @@ const Layout: React.FC = () => {
           <Drawer
             variant="permanent"
             sx={{
-              display: { xs: 'none', sm: 'block' },
-              '& .MuiDrawer-paper': {
-                boxSizing: 'border-box',
+              display: { xs: "none", sm: "block" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
                 width: drawerWidth,
-                backgroundColor: darkMode ? '#333' : '#f4f4f4',
+                backgroundColor: darkMode ? "#333" : "#f4f4f4",
               },
             }}
             open
@@ -229,8 +244,8 @@ const Layout: React.FC = () => {
             flexGrow: 1,
             p: 3,
             width: { sm: `calc(100% - ${drawerWidth}px)` },
-            backgroundColor: darkMode ? '#121212' : '#eef7f9',
-            minHeight: '100vh',
+            backgroundColor: darkMode ? "#121212" : "#eef7f9",
+            minHeight: "100vh",
           }}
         >
           <Toolbar />
