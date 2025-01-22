@@ -167,7 +167,7 @@ export const OrderManagement: React.FC = () => {
                       ))}
                     </TableCell>
                     <TableCell>{formatCurrency(order.total)}</TableCell>
-                    <TableCell>{order.room_no || 'N/A'}</TableCell>
+                    <TableCell>{order.roomNumber || 'N/A'}</TableCell>
                     <TableCell>
                       <IconButton
                         color="error"

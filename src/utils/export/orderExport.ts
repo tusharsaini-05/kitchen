@@ -1,12 +1,9 @@
 import { orderService } from '../../services/order/orderService';
 import { format } from 'date-fns';
+import { Order } from '../../types';
 
-export const exportOrders = async (date: Date) => {
+export const exportOrders = async (date: Date,orders:Order[]) => {
   try {
-    const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
-    const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    
-    const orders = await orderService.getOrders(startDate, endDate); // Ensure this returns the correct data
 
     // Check if orders are fetched correctly
     console.log('Fetched orders for export:', orders); // Debugging line

@@ -41,3 +41,8 @@ export interface DashboardStats {
 export interface OrderReceiverProps {
   role: string; // Role is a string value
 }
+export interface Hotel{
+  id:string,
+  created_at:string,
+  hotel_name:string
+}
