@@ -27,13 +27,11 @@ import { OrderReceiverProps } from '../types';
 
 export const OrderReceiver: React.FC<OrderReceiverProps> = ({role}) => {
 
-  console.log(role)
-
   const { orders, loading, error, markAsCompleted } = usePendingOrders();
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
-
+  console.log(orders)
   const handleMarkAsCompleted = async (orderId: string) => {
     try {
       await markAsCompleted(orderId);
@@ -46,7 +44,7 @@ export const OrderReceiver: React.FC<OrderReceiverProps> = ({role}) => {
   const handleExport = async () => {
     try {
       const [year, month] = selectedMonth.split('-');
-      await exportOrders(new Date(parseInt(year), parseInt(month) - 1));
+      await exportOrders(new Date(parseInt(year), parseInt(month) - 1),orders);
       setSuccessMessage('Orders exported successfully');
     } catch (err) {
       console.error('Error exporting orders:', err);
