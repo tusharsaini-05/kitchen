@@ -7,12 +7,13 @@ class OrderService {
       const { data: { user }, error: sessionError } = await supabase.auth.getUser();
       if (sessionError) throw new Error('Authentication error');
       if (!user) throw new Error('No active session');
-
+      console.log(user)
       const { data: userProfile, error: userError } = await supabase
         .from('users')
         .select('id')
         .eq('email', user.email)
         .single();
+        console.log(userProfile)
 
       if (userError || !userProfile) {
         throw new Error('User profile not found');
