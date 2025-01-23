@@ -72,9 +72,6 @@ import { OrderManagement } from './components/OrderManagement';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import LoadingSpinner from './components/common/LoadingSpinner';
-
-
-
 import { HotelManagement } from './components/HotelManagement';
 
 
@@ -99,9 +96,9 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/orders" element={<OrderSystem />} />
-            <Route path="/order-receiver" element={
+            <Route path="/order-receiver"  element={
               <ProtectedRoute allowedRoles={['admin', 'order_receiver','order_taker']}>
-                 <OrderReceiver />
+                 <OrderReceiver hotelName =  {"hotelC"} />
               </ProtectedRoute>
             } />
             <Route path="/order-management" element={
