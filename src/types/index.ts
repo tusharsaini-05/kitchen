@@ -46,3 +46,6 @@ export interface Hotel{
   created_at:string,
   hotel_name:string
 }
+export interface HotelProps {
+  hotelName: string;
+}

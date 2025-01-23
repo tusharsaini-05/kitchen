@@ -21,14 +21,14 @@ import { exportOrders } from '../utils/export/orderExport';
 import { format } from 'date-fns';
 
 import { useAuth } from '../hooks/useAuth';
+import { HotelProps } from '../types';
 
-
-export const OrderReceiver: React.FC = () => {
+export const OrderReceiver: React.FC<HotelProps> = ({hotelName}) => {
 
 
 
   const { user } = useAuth();
-  const { orders, loading, error, markAsCompleted } = usePendingOrders();
+  const { orders, loading, error, markAsCompleted } = usePendingOrders({hotelName});
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   

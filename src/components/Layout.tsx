@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
   AppBar,
@@ -30,21 +30,27 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useAuth } from "../hooks/useAuth";
 import logo1 from "../data/logo1.png";
-
+import { Hotel } from "../types";
+import { hotelService } from "../services/hotel/hotelService";
 const drawerWidth = 240;
 
 const Layout: React.FC = () => {
+  const [hotelss,setHotels] = useState<Hotel[] | null>();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedHotel, setSelectedHotel] = useState("");
-  const hotels = [
-    { id: 1, name: "Hotel A" },
-    { id: 2, name: "Hotel B" },
-  ];
 
+  const settingHotel = async() =>{
+    const hotels = await hotelService.getHotels();
+    setHotels(hotels);
+  }
+  useEffect(() =>{
+    settingHotel();
+  },[])
+  
   const theme = createTheme({
     palette: {
       mode: darkMode ? "dark" : "light",
@@ -171,9 +177,9 @@ const Layout: React.FC = () => {
                   <MenuItem value="">
                     <em>All Hotels</em>
                   </MenuItem>
-                  {hotels.map((hotel) => (
-                    <MenuItem key={hotel.id} value={hotel.name}>
-                      {hotel.name}
+                  {hotelss?.map((hotel) => (
+                    <MenuItem key={hotel.id} value={hotel.hotel_name}>
+                      {hotel.hotel_name}
                     </MenuItem>
                   ))}
                 </Select>

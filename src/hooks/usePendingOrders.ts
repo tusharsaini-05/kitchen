@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Order } from '../types';
 import { orderService } from '../services/order/orderService';
+import { HotelProps } from '../types';
 
-export const usePendingOrders = () => {
+export const usePendingOrders = ({ hotelName }: HotelProps) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -10,7 +11,7 @@ export const usePendingOrders = () => {
   const loadPendingOrders = async () => {
     try {
       setLoading(true);
-      const pendingOrders = await orderService.getPendingOrders();
+      const pendingOrders = await orderService.getPendingOrders({hotelName});
       setOrders(pendingOrders);
       setError(null);
     } catch (err: any) {

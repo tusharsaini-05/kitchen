@@ -1,6 +1,6 @@
 import { Order } from '../../types';
 import { supabase } from '../../config/supabase';
-
+import { HotelProps } from '../../types';
 class OrderService {
   async submitOrder(order: Order): Promise<void> {
     try {
@@ -39,7 +39,7 @@ class OrderService {
     }
   }
 
-  async getPendingOrders(): Promise<Order[]> {
+  async getPendingOrders({ hotelName }: HotelProps): Promise<Order[]> {
     try {
       const { data: { user }, error: sessionError } = await supabase.auth.getUser();
       if (sessionError) throw new Error('Authentication error');
