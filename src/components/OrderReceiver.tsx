@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Container, 
   Grid, 
@@ -19,20 +19,20 @@ import { formatDate, formatCurrency } from '../utils/date/dateHelpers';
 import { usePendingOrders } from '../hooks/usePendingOrders';
 import { exportOrders } from '../utils/export/orderExport';
 import { format } from 'date-fns';
-
 import { useAuth } from '../hooks/useAuth';
-import { HotelProps } from '../types';
+import { useRecoilState,SetRecoilState,useSetRecoilState,useRecoilValue } from 'recoil';
+import { hotelAtomName } from '../atoms/atom'
 
-export const OrderReceiver: React.FC<HotelProps> = ({hotelName}) => {
+export const OrderReceiver: React.FC = () => {
 
-
-
+  const atomValue = useRecoilValue(hotelAtomName);
+  //console.log(atomValue)
+  
   const { user } = useAuth();
-  const { orders, loading, error, markAsCompleted } = usePendingOrders({hotelName});
+  const { orders, loading, error, markAsCompleted } = usePendingOrders(atomValue);
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  
- 
+
   const handleMarkAsCompleted = async (orderId: string) => {
     try {
       await markAsCompleted(orderId);

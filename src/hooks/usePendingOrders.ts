@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { Order } from '../types';
 import { orderService } from '../services/order/orderService';
 import { HotelProps } from '../types';
+import { hotelAtomName } from '../atoms/atom';
+import { useRecoilValue } from 'recoil';
 
-export const usePendingOrders = ({ hotelName }: HotelProps) => {
+export const usePendingOrders = (atomValue:string) => {
+  //console.log(atomValue)
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -11,7 +14,7 @@ export const usePendingOrders = ({ hotelName }: HotelProps) => {
   const loadPendingOrders = async () => {
     try {
       setLoading(true);
-      const pendingOrders = await orderService.getPendingOrders({hotelName});
+      const pendingOrders = await orderService.getPendingOrders(atomValue);
       setOrders(pendingOrders);
       setError(null);
     } catch (err: any) {

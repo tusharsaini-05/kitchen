@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { hotelAtomName } from "../atoms/atom";
+
 import {
   AppBar,
   Box,
@@ -32,25 +35,38 @@ import { useAuth } from "../hooks/useAuth";
 import logo1 from "../data/logo1.png";
 import { Hotel } from "../types";
 import { hotelService } from "../services/hotel/hotelService";
+
 const drawerWidth = 240;
 
+// Custom hook to update the Recoil atom
+const useUpdateHotelAtom = () => {
+  const setMyAtom = useSetRecoilState(hotelAtomName);
+  return (value: string) => {
+    setMyAtom(value);
+  };
+};
+
 const Layout: React.FC = () => {
-  const [hotelss,setHotels] = useState<Hotel[] | null>();
+  const [hotelss, setHotels] = useState<Hotel[] | null>();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedHotel, setSelectedHotel] = useState("");
+  const [selectedHotel, setSelectedHotel] = useState("all");
 
-  const settingHotel = async() =>{
+  const updateHotelAtom = useUpdateHotelAtom(); // Use the custom hook
+
+  const fetchHotels = async () => {
     const hotels = await hotelService.getHotels();
     setHotels(hotels);
-  }
-  useEffect(() =>{
-    settingHotel();
-  },[])
-  
+  };
+
+  useEffect(() => {
+    fetchHotels();
+  }, []);
+
   const theme = createTheme({
     palette: {
       mode: darkMode ? "dark" : "light",
@@ -175,13 +191,27 @@ const Layout: React.FC = () => {
                   sx={{ color: "white", "& .MuiSelect-icon": { color: "white" } }}
                 >
                   <MenuItem value="">
-                    <em>All Hotels</em>
+                    <Button onClick={() =>{
+                        updateHotelAtom('all')
+                    }}>
+                      <em>All Hotels</em>
+                    </Button>
+                  
                   </MenuItem>
                   {hotelss?.map((hotel) => (
                     <MenuItem key={hotel.id} value={hotel.hotel_name}>
-                      {hotel.hotel_name}
+                      <Button
+                        onClick={() => {
+                          updateHotelAtom(hotel.hotel_name);
+                           // Call the function from the custom hook
+                        }}
+                      >
+                        {hotel.hotel_name}
+                      </Button>
                     </MenuItem>
+                  
                   ))}
+                  
                 </Select>
               </FormControl>
             ) : (
@@ -191,7 +221,6 @@ const Layout: React.FC = () => {
                   mr: 2,
                   color: "rgba(255, 255, 255, 0.8)",
                   fontStyle: "italic",
-
                 }}
               >
                 {user?.hotel}

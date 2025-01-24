@@ -73,6 +73,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuth } from './hooks/useAuth';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import { HotelManagement } from './components/HotelManagement';
+import { RecoilRoot } from 'recoil';
 
 
 function App() {
@@ -85,48 +86,69 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
+  <RecoilRoot> {/* RecoilRoot wraps everything */}
+    <Routes>
       <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
-        
-        <Route element={<ProtectedRoute />}>
-          <Route element={<Layout />}>
-            <Route path="/dashboard" element={         
+
+      <Route element={<ProtectedRoute />}>
+        <Route element={<Layout />}>
+          <Route
+            path="/dashboard"
+            element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <Dashboard />
               </ProtectedRoute>
-            } />
-            <Route path="/orders" element={<OrderSystem />} />
-            <Route path="/order-receiver"  element={
-              <ProtectedRoute allowedRoles={['admin', 'order_receiver','order_taker']}>
-                 <OrderReceiver hotelName =  {"hotelC"} />
+            }
+          />
+          <Route path="/orders" element={<OrderSystem />} />
+          <Route
+            path="/order-receiver"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'order_receiver', 'order_taker']}>
+                <OrderReceiver /> {/* No nested RecoilRoot */}
               </ProtectedRoute>
-            } />
-            <Route path="/order-management" element={
+            }
+          />
+          <Route
+            path="/order-management"
+            element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <OrderManagement />
               </ProtectedRoute>
-            } />
-            <Route path="/users" element={
+            }
+          />
+          <Route
+            path="/users"
+            element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <UserManagement />
               </ProtectedRoute>
-            } />
-              <Route path="/hotel-management" element={
+            }
+          />
+          <Route
+            path="/hotel-management"
+            element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <HotelManagement />
               </ProtectedRoute>
-            } />
-            <Route path="/menu" element={
+            }
+          />
+          <Route
+            path="/menu"
+            element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <MenuManagement />
               </ProtectedRoute>
-            } />
-          </Route>
+            }
+          />
         </Route>
+      </Route>
 
-        <Route path="/" element={<Navigate to="/login" />} />
-      </Routes>
-    </BrowserRouter>
+      <Route path="/" element={<Navigate to="/login" />} />
+    </Routes>
+  </RecoilRoot>
+</BrowserRouter>
+
   );
 }
 
