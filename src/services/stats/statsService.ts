@@ -2,14 +2,19 @@ import { DashboardStats } from '../../types';
 import { supabase } from '../../config/supabase';
 
 class StatsService {
-  async getStats(startDate: Date, endDate: Date): Promise<DashboardStats> {
+  async getStats(startDate: Date, endDate: Date,atomValue:string): Promise<DashboardStats> {
     try {
       // Get orders for the period
-      const { data: orders, error: ordersError } = await supabase
+      const { data: orders, error: ordersError } = atomValue == 'all'?  await supabase
         .from('orders')
         .select('*')
         .gte('timestamp', startDate.toISOString())
-        .lte('timestamp', endDate.toISOString());
+        .lte('timestamp', endDate.toISOString()) :await supabase
+        .from('orders')
+        .select('*')
+        .eq('hotel',atomValue)
+        .gte('timestamp', startDate.toISOString())
+        .lte('timestamp', endDate.toISOString())
 
       if (ordersError) throw ordersError;
 

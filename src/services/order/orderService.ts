@@ -1,7 +1,10 @@
 import { Order } from '../../types';
 import { supabase } from '../../config/supabase';
 import { HotelProps } from '../../types';
+import {hotelAtomName} from '../../atoms/atom';
+import { useRecoilValue } from 'recoil';
 class OrderService {
+  
   async submitOrder(order: Order): Promise<void> {
     try {
       const { data: { user }, error: sessionError } = await supabase.auth.getUser();
@@ -39,8 +42,11 @@ class OrderService {
     }
   }
 
-  async getPendingOrders({ hotelName }: HotelProps): Promise<Order[]> {
+  async getPendingOrders(atomValue:string): Promise<Order[]> {
     try {
+
+      console.log(atomValue)
+    
       const { data: { user }, error: sessionError } = await supabase.auth.getUser();
       if (sessionError) throw new Error('Authentication error');
       if (!user) throw new Error('No active session');
@@ -54,7 +60,25 @@ class OrderService {
       if (userError || !userProfile) {
         throw new Error('User profile not found');
       }
-      if(userProfile.hotel == 'all'){
+      if(userProfile.hotel == 'all' && atomValue != 'all'){
+        
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*, users(name)')
+          .eq('status', 'pending')
+          .eq('hotel',atomValue)
+          .order('timestamp', { ascending: true });
+       if (error) throw error;
+
+
+       return (data || []).map(order => ({
+          ...order,
+          userId: order.user_id,
+          userName: order.users?.name
+       }));
+     }
+     
+    else if(userProfile.hotel == 'all' ){
          const { data, error } = await supabase
            .from('orders')
            .select('*, users(name)')
