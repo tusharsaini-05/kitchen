@@ -23,22 +23,28 @@ import { useAuth } from '../hooks/useAuth';
 import { useRecoilValue } from 'recoil';
 import { hotelAtomName } from '../atoms/atom';
 import { Order } from '../types';
-interface Ordertype{
-  orders: Order[];
-    loading: boolean;
-    error: string | null;
-    markAsCompleted: (orderId: string) => Promise<void>;
-    refreshOrders: () => Promise<void>;
-}
 
 export const OrderReceiver: React.FC = () => {
-  const atomValue = useRecoilValue(hotelAtomName); // Automatically updates the component when the atom changes
+  const hotelId = useRecoilValue(hotelAtomName); // Automatically updates the component when the atom changes
   const { user } = useAuth();
 
-  const { orders, loading, error, markAsCompleted } = usePendingOrders(atomValue); // Re-fetch orders based on the updated atom value
+  // Get pending orders based on the updated hotelId
+  const { orders, loading, error, markAsCompleted, refreshOrders } =
+    usePendingOrders(hotelId);
+
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders); // Add filteredOrders state
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  useEffect(() => {
+    // Filter orders when the selected month changes
+    const [year, month] = selectedMonth.split('-');
+    const filtered = orders.filter(order => {
+      const orderDate = new Date(order.timestamp);
+      return orderDate.getFullYear() === parseInt(year) && orderDate.getMonth() === parseInt(month) - 1;
+    });
+    setFilteredOrders(filtered);
+  }, [orders, selectedMonth]); // Re-run the filter when orders or selectedMonth change
 
   const handleMarkAsCompleted = async (orderId: string) => {
     try {
@@ -52,10 +58,19 @@ export const OrderReceiver: React.FC = () => {
   const handleExport = async () => {
     try {
       const [year, month] = selectedMonth.split('-');
-      await exportOrders(new Date(parseInt(year), parseInt(month) - 1), orders);
+      await exportOrders(new Date(parseInt(year), parseInt(month) - 1), filteredOrders);
       setSuccessMessage('Orders exported successfully');
     } catch (err) {
       console.error('Error exporting orders:', err);
+    }
+  };
+
+  const handleRefreshOrders = async () => {
+    try {
+      await refreshOrders(); // Refresh orders manually if needed
+      setSuccessMessage('Orders refreshed successfully');
+    } catch (err) {
+      console.error('Error refreshing orders:', err);
     }
   };
 
@@ -104,11 +119,14 @@ export const OrderReceiver: React.FC = () => {
           >
             Export Orders
           </Button>
+          <Button variant="contained" onClick={handleRefreshOrders}>
+            Refresh Orders
+          </Button>
         </div>
       </div>
 
       <Grid container spacing={3}>
-        {orders.length === 0 ? (
+        {filteredOrders.length === 0 ? (
           <Grid item xs={12}>
             <Card>
               <CardContent>
@@ -119,7 +137,7 @@ export const OrderReceiver: React.FC = () => {
             </Card>
           </Grid>
         ) : (
-          orders.map((order) => (
+          filteredOrders.map((order) => (
             <Grid item xs={12} sm={6} md={4} key={order.id}>
               <Card>
                 <CardContent>

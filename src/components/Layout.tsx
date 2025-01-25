@@ -183,37 +183,56 @@ const Layout: React.FC = () => {
               {darkMode ? "🌞" : "🌙"}
             </IconButton>
             {user?.role === "admin" ? (
-              <FormControl sx={{ minWidth: 120, mr: 2 }}>
-                <Select
-                  value={selectedHotel}
-                  onChange={(e) => setSelectedHotel(e.target.value)}
-                  displayEmpty
-                  sx={{ color: "white", "& .MuiSelect-icon": { color: "white" } }}
-                >
-                  <MenuItem value="">
-                    <Button onClick={() =>{
-                        updateHotelAtom('all')
-                    }}>
-                      <em>All Hotels</em>
-                    </Button>
-                  
+              <FormControl sx={{ minWidth: 160, mr: 2 }}>
+              <Select
+                value={selectedHotel}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedHotel(value);
+                  updateHotelAtom(value); // Updates the Recoil atom
+                }}
+                displayEmpty
+                sx={{
+                  color: "white",
+                  fontSize: "0.9rem",
+                  fontWeight: "bold",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  borderRadius: "8px",
+                  "& .MuiSelect-icon": { color: "white" },
+                  "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.2)" },
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      backgroundColor: darkMode ? "#424242" : "#fff",
+                      color: darkMode ? "white" : "black",
+                      borderRadius: "8px",
+                      "& .MuiMenuItem-root": {
+                        fontSize: "0.9rem",
+                        padding: "8px 16px",
+                        "&:hover": {
+                          backgroundColor: darkMode ? "#616161" : "#f5f5f5",
+                        },
+                      },
+                    },
+                  },
+                }}
+              >
+                <MenuItem value="all">
+                  <Typography fontWeight="bold" fontSize="0.9rem">
+                    All Hotels
+                  </Typography>
+                </MenuItem>
+                {hotelss?.map((hotel) => (
+                  <MenuItem key={hotel.id} value={hotel.hotel_name}>
+                    <Typography fontWeight="bold" fontSize="0.9rem">
+                      {hotel.hotel_name}
+                    </Typography>
                   </MenuItem>
-                  {hotelss?.map((hotel) => (
-                    <MenuItem key={hotel.id} value={hotel.hotel_name}>
-                      <Button
-                        onClick={() => {
-                          updateHotelAtom(hotel.hotel_name);
-                           // Call the function from the custom hook
-                        }}
-                      >
-                        {hotel.hotel_name}
-                      </Button>
-                    </MenuItem>
-                  
-                  ))}
-                  
-                </Select>
-              </FormControl>
+                ))}
+              </Select>
+            </FormControl>
+            
             ) : (
               <Typography
                 variant="body1"

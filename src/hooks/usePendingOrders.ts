@@ -28,9 +28,10 @@ export const usePendingOrders = (atomValue:string) => {
   useEffect(() => {
     loadPendingOrders();
     // Poll for new orders every 30 seconds
-    const interval = setInterval(loadPendingOrders, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    loadPendingOrders();
+   
+    
+  }, [atomValue]);
 
   const markAsCompleted = async (orderId: string) => {
     try {
