@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  Container, 
-  Grid, 
-  Card, 
-  CardContent, 
-  Typography, 
+import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
   Button,
   Chip,
   FormControl,
@@ -12,7 +12,7 @@ import {
   MenuItem,
   InputLabel,
   Alert,
-  Snackbar
+  Snackbar,
 } from '@mui/material';
 import { Check, AccessTime, FileDownload } from '@mui/icons-material';
 import { formatDate, formatCurrency } from '../utils/date/dateHelpers';
@@ -20,18 +20,25 @@ import { usePendingOrders } from '../hooks/usePendingOrders';
 import { exportOrders } from '../utils/export/orderExport';
 import { format } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
-import { useRecoilState,SetRecoilState,useSetRecoilState,useRecoilValue } from 'recoil';
-import { hotelAtomName } from '../atoms/atom'
+import { useRecoilValue } from 'recoil';
+import { hotelAtomName } from '../atoms/atom';
+import { Order } from '../types';
+interface Ordertype{
+  orders: Order[];
+    loading: boolean;
+    error: string | null;
+    markAsCompleted: (orderId: string) => Promise<void>;
+    refreshOrders: () => Promise<void>;
+}
 
 export const OrderReceiver: React.FC = () => {
-
-  const atomValue = useRecoilValue(hotelAtomName);
-  //console.log(atomValue)
-  
+  const atomValue = useRecoilValue(hotelAtomName); // Automatically updates the component when the atom changes
   const { user } = useAuth();
-  const { orders, loading, error, markAsCompleted } = usePendingOrders(atomValue);
+
+  const { orders, loading, error, markAsCompleted } = usePendingOrders(atomValue); // Re-fetch orders based on the updated atom value
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
 
   const handleMarkAsCompleted = async (orderId: string) => {
     try {
@@ -45,7 +52,7 @@ export const OrderReceiver: React.FC = () => {
   const handleExport = async () => {
     try {
       const [year, month] = selectedMonth.split('-');
-      await exportOrders(new Date(parseInt(year), parseInt(month) - 1),orders);
+      await exportOrders(new Date(parseInt(year), parseInt(month) - 1), orders);
       setSuccessMessage('Orders exported successfully');
     } catch (err) {
       console.error('Error exporting orders:', err);
@@ -99,7 +106,7 @@ export const OrderReceiver: React.FC = () => {
           </Button>
         </div>
       </div>
-      
+
       <Grid container spacing={3}>
         {orders.length === 0 ? (
           <Grid item xs={12}>
@@ -121,12 +128,16 @@ export const OrderReceiver: React.FC = () => {
                       Order #{order.id.slice(-4)}
                     </Typography>
                     <Chip
-                      icon={order.status === 'pending' ? <AccessTime /> : <Check />}
+                      icon={
+                        order.status === 'pending' ? <AccessTime /> : <Check />
+                      }
                       label={order.status.toUpperCase()}
-                      color={order.status === 'pending' ? 'warning' : 'success'}
+                      color={
+                        order.status === 'pending' ? 'warning' : 'success'
+                      }
                     />
                   </div>
-                  
+
                   <Typography color="textSecondary" gutterBottom>
                     {formatDate(order.timestamp)}
                   </Typography>
@@ -156,18 +167,19 @@ export const OrderReceiver: React.FC = () => {
                     </div>
                   </div>
 
-                  {order.status === 'pending' && !(user?.role == 'order_taker') && (
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      color="success"
-                      startIcon={<Check />}
-                      onClick={() => handleMarkAsCompleted(order.id)}
-                      sx={{ mt: 2 }}
-                    >
-                      Mark as Completed
-                    </Button>
-                  )}
+                  {order.status === 'pending' &&
+                    !(user?.role === 'order_taker') && (
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        color="success"
+                        startIcon={<Check />}
+                        onClick={() => handleMarkAsCompleted(order.id)}
+                        sx={{ mt: 2 }}
+                      >
+                        Mark as Completed
+                      </Button>
+                    )}
                 </CardContent>
               </Card>
             </Grid>

@@ -29,22 +29,26 @@ import { statsService } from '../services/stats/statsService';
 import LoadingSpinner from './common/LoadingSpinner';
 import { ErrorMessage } from './common/ErrorMessage';
 import { formatCurrency } from '../utils/date/dateHelpers';
+import { useRecoilValue } from 'recoil';
+import { hotelAtomName } from '../atoms/atom';
 
 export const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
+   const atomValue = useRecoilValue(hotelAtomName);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        
         setLoading(true);
         const [year, month] = selectedMonth.split('-');
         const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
         const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59); // Full last day
 
-        const data = await statsService.getStats(startDate, endDate);
+        const data = await statsService.getStats(startDate, endDate,atomValue);
         setStats(data);
         setError(null);
       } catch (err: any) {

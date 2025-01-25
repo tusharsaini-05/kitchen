@@ -92,6 +92,7 @@ function App() {
 
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
+        
           <Route
             path="/dashboard"
             element={
