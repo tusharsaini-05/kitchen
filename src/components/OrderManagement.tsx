@@ -25,7 +25,8 @@ import LoadingSpinner from './common/LoadingSpinner';
 import { ErrorMessage } from './common/ErrorMessage';
 import { exportOrders } from '../utils/export/orderExport';
 import { formatCurrency } from '../utils/date/dateHelpers';
-
+import { useRecoilValue } from 'recoil';
+import { hotelAtomName } from '../atoms/atom';
 export const OrderManagement: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,17 +34,20 @@ export const OrderManagement: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  const hotelName = useRecoilValue(hotelAtomName);
+
   const fetchOrders = async () => {
+    
     try {
       setLoading(true);
       const [year, month] = selectedMonth.split('-');
       const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
       const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59);
 
-      console.log('Fetching orders from:', startDate.toISOString(), 'to:', endDate.toISOString());
+      //console.log('Fetching orders from:', startDate.toISOString(), 'to:', endDate.toISOString());
 
-      const data = await orderService.getOrders(startDate, endDate);
-      console.log('Fetched orders:', data);
+      const data = await orderService.getOrders(startDate, endDate,hotelName);
+      //console.log('Fetched orders:', data);
 
       if (Array.isArray(data)) {
         setOrders(data);
@@ -62,7 +66,7 @@ export const OrderManagement: React.FC = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [selectedMonth]);
+  }, [hotelName,selectedMonth]);
 
   const handleDelete = async (orderId: string) => {
     try {
@@ -80,7 +84,7 @@ export const OrderManagement: React.FC = () => {
       const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
       const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59);
 
-      const orders = await orderService.getOrders(startDate, endDate); // Fetch orders for the selected month
+      const orders = await orderService.getOrders(startDate, endDate,hotelName); // Fetch orders for the selected month
 
       await exportOrders(new Date(parseInt(year), parseInt(month) - 1), orders); // Pass the fetched orders to export
       setSuccessMessage('Orders exported successfully');
