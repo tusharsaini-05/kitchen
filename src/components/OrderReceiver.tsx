@@ -29,7 +29,7 @@ export const OrderReceiver: React.FC = () => {
   const { user } = useAuth();
 
   // Get pending orders based on the updated hotelId
-  const { orders, loading, error, markAsCompleted, refreshOrders } =
+  const { orders, loading, error, markAsCompleted } =
     usePendingOrders(hotelId);
 
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
@@ -62,15 +62,6 @@ export const OrderReceiver: React.FC = () => {
       setSuccessMessage('Orders exported successfully');
     } catch (err) {
       console.error('Error exporting orders:', err);
-    }
-  };
-
-  const handleRefreshOrders = async () => {
-    try {
-      await refreshOrders(); // Refresh orders manually if needed
-      setSuccessMessage('Orders refreshed successfully');
-    } catch (err) {
-      console.error('Error refreshing orders:', err);
     }
   };
 
@@ -119,9 +110,7 @@ export const OrderReceiver: React.FC = () => {
           >
             Export Orders
           </Button>
-          <Button variant="contained" onClick={handleRefreshOrders}>
-            Refresh Orders
-          </Button>
+          
         </div>
       </div>
 

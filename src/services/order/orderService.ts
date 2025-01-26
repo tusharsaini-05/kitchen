@@ -141,8 +141,38 @@ class OrderService {
     }
   }
 
-  async getOrders(startDate: Date, endDate: Date): Promise<Order[]> {
+  async getOrders(startDate: Date, endDate: Date,atomValue:string): Promise<Order[]> {
     try {
+      
+      const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+      if (sessionError) throw new Error('Authentication error');
+      if (!user) throw new Error('No active session');
+
+      const { data: userProfile, error: userError } = await supabase
+        .from('users')
+        .select('id,hotel')
+        .eq('email', user.email)
+        .single();
+        if(userError) throw userError
+
+      if(userProfile?.hotel == 'all' && atomValue != 'all'){
+        const { data, error } = await supabase
+        .from('orders')
+        .select('*, users(name)')
+        .eq('hotel',atomValue)
+        .gte('timestamp', startDate.toISOString())
+        .lte('timestamp', endDate.toISOString())
+        .order('timestamp', { ascending: false });
+
+      if (error) throw error;
+
+      return (data || []).map(order => ({
+        ...order,
+        userId: order.user_id,
+        userName: order.users?.name
+      }));
+      }
+      
       const { data, error } = await supabase
         .from('orders')
         .select('*, users(name)')
