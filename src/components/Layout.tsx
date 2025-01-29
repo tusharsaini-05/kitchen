@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { hotelAtomName } from "../atoms/atom";
-
+import { debounce } from "lodash";
 import {
   AppBar,
   Box,
@@ -85,8 +85,12 @@ const Layout: React.FC = () => {
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
+  const handleSearch = debounce((term) => {
+    console.log("Heading towards :", term); // Simulate API call
+  }, 500);
   const handleSignOut = async () => {
     await signOut();
+    handleSearch('login')
     navigate("/login");
   };
 
