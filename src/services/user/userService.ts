@@ -59,34 +59,34 @@ class UserService {
 
   async deleteUser(userId: string): Promise<void> {
     try {
-      const { data: user, error: userError } = await supabase
-        .from('users')
-        .select('user_id')
-        .eq('user_id', userId)
-        .single();
-
-
-      if (userError || !user) throw new Error('User not found');
-
-      const { error } = await supabase
-        .from('users')
+      // Delete all related orders first
+      const { error: orderDeleteError } = await supabase
+        .from("orders")
         .delete()
-        .eq('user_id', userId
-        );
-        if(error) throw error;
-
-
-      // Delete auth user (this will cascade to the profile due to foreign key)
-      const { error: deleteError } = await supabase.auth.admin.deleteUser(
-        user.user_id
-      );
-
-      if (deleteError) throw deleteError;
+        .eq("user_id", userId);
+  
+      if (orderDeleteError) throw orderDeleteError;
+  
+      // Delete the user from the 'users' table
+      const { error: userDeleteError } = await supabase
+        .from("users")
+        .delete()
+        .eq("user_id", userId);
+  
+      if (userDeleteError) throw userDeleteError;
+  
+      // Delete the user from Supabase auth
+      const { error: authDeleteError } = await supabase.auth.admin.deleteUser(userId);
+      
+      if (authDeleteError) throw authDeleteError;
+  
     } catch (error: any) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
       throw error;
     }
   }
+  
+
 }
 
 export const userService = new UserService();
