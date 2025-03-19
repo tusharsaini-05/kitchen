@@ -26,6 +26,8 @@ import LoadingSpinner from './common/LoadingSpinner';
 export const MenuManagement: React.FC = () => {
   const { items, loading, error, addMenuItem, deleteMenuItem } = useMenu();
   const [open, setOpen] = React.useState(false);
+  const [customCategory, setCustomCategory] = React.useState("");
+  const [isCustomCategory, setIsCustomCategory] = React.useState(false);
   const [newItem, setNewItem] = React.useState({
     nameEn: '',
     nameTh: '',
@@ -137,21 +139,45 @@ export const MenuManagement: React.FC = () => {
             onChange={(e) =>
               setNewItem({ ...newItem, price: Number(e.target.value) })
             }
-          />
-          <FormControl fullWidth margin="dense">
-            <InputLabel>Category</InputLabel>
-            <Select
-              value={newItem.category}
-              onChange={(e) =>
-                setNewItem({ ...newItem, category: e.target.value })
-              }
-            >
-              <MuiMenuItem value="main">Main Dishes</MuiMenuItem>
-              <MuiMenuItem value="appetizer">Appetizers</MuiMenuItem>
-              <MuiMenuItem value="dessert">Desserts</MuiMenuItem>
-              <MuiMenuItem value="beverage">Beverages</MuiMenuItem>
-            </Select>
-          </FormControl>
+              />
+<FormControl fullWidth margin="dense">
+  <InputLabel>Category</InputLabel>
+  <Select
+    value={isCustomCategory ? "new" : newItem.category}
+    onChange={(e) => {
+      if (e.target.value === "new") {
+        setIsCustomCategory(true);
+        setCustomCategory(""); // Allow user input
+      } else {
+        setNewItem({ ...newItem, category: e.target.value });
+        setIsCustomCategory(false);
+      }
+    }}
+  >
+    <MuiMenuItem value="main">Main Dishes</MuiMenuItem>
+    <MuiMenuItem value="appetizer">Appetizers</MuiMenuItem>
+    <MuiMenuItem value="dessert">Desserts</MuiMenuItem>
+    <MuiMenuItem value="beverage">Beverages</MuiMenuItem>
+    <MuiMenuItem value="new">➕ Add a new category</MuiMenuItem> {/* New Option */}
+  </Select>
+</FormControl>
+
+{/* Show input field only if "Add a new category" is selected */}
+{isCustomCategory && (
+  <TextField
+    margin="dense"
+    label="Enter New Category"
+    fullWidth
+    value={customCategory}
+    onChange={(e) => setCustomCategory(e.target.value)}
+    onBlur={() => {
+      if (customCategory.trim()) {
+        setNewItem({ ...newItem, category: customCategory.trim() });
+        setIsCustomCategory(false); // Hide input after entering value
+      }
+    }}
+  />
+)}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>

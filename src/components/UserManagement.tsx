@@ -39,6 +39,7 @@ export const UserManagement: React.FC = () => {
 
   const [newUser, setNewUser] = useState({
     email: "",
+    password: "", // Added password field
     name: "",
     hotelName: "",
     role: "",
@@ -80,17 +81,17 @@ export const UserManagement: React.FC = () => {
     try {
       await userService.createUser(
         newUser.email,
-        newUser.password,
+        newUser.password, // Include password
         newUser.role,
         newUser.name,
-        newUser.hotelName // Include hotel name when creating a user
+        newUser.hotelName 
       );
       setOpen(false);
       setSuccessMessage('User created successfully');
       fetchUsers();
       setNewUser({
         email: '',
-        password: '',
+        password: '', // Reset password field
         name: '',
         hotelName: '',
         role: 'order_taker',
@@ -99,23 +100,16 @@ export const UserManagement: React.FC = () => {
       setError(err.message || 'Failed to create user');
     }
   };
-  
-      // Ensure the latest data is fetched
-  
-  
-  
 
   const handleDelete = async (userId: string) => {
     try {
-      //await userService.deleteUserOrders(userId); // Ensure backend deletes orders first
-      await userService.deleteUser(userId); // Then delete the user
+      await userService.deleteUser(userId);
       setSuccessMessage("User deleted successfully");
       fetchUsers();
     } catch (err: any) {
       setError(err.message || "Failed to delete user");
     }
   };
-  
 
   if (loading) return <LoadingSpinner />;
 
@@ -168,7 +162,6 @@ export const UserManagement: React.FC = () => {
         </TableContainer>
       </Paper>
 
-      {/* Add New User Dialog */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Add New User</DialogTitle>
         <DialogContent>
@@ -187,6 +180,14 @@ export const UserManagement: React.FC = () => {
             fullWidth
             value={newUser.email}
             onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+          />
+          <TextField
+            margin="dense"
+            label="Password"
+            type="password"
+            fullWidth
+            value={newUser.password}
+            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
           />
           <FormControl fullWidth margin="dense">
             <InputLabel>Hotel Name</InputLabel>
