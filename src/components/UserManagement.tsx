@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Paper,
@@ -20,27 +20,45 @@ import {
   TableHead,
   TableRow,
   Alert,
-} from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { userService } from '../services/user/userService';
-import { User } from '../types';
-import LoadingSpinner from './common/LoadingSpinner';
-import { ErrorMessage } from './common/ErrorMessage';
-import { format } from 'date-fns';
+} from "@mui/material";
+import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { userService } from "../services/user/userService";
+import { Hotel, User } from "../types";
+import LoadingSpinner from "./common/LoadingSpinner";
+import { ErrorMessage } from "./common/ErrorMessage";
+import { format } from "date-fns";
+import { hotelService } from "../services/hotel/hotelService";
 
 export const UserManagement: React.FC = () => {
+  const [hotels, setHotels] = useState<Hotel[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   const [newUser, setNewUser] = useState({
-    email: '',
-    password: '',
-    name: '',
-    hotelName: '', // New field added for hotel name
-    role: 'order_taker' as User['role'],
+    email: "",
+    password: "", // Added password field
+    name: "",
+    hotelName: "",
+    role: "",
   });
+
+  const roles = ["admin", "order_taker", "order_receiver"];
+
+  useEffect(() => {
+    const fetchHotels = async () => {
+      try {
+        const hotelsData = await hotelService.getHotels();
+        setHotels(hotelsData);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch hotels");
+      }
+    };
+
+    fetchHotels();
+  }, []);
 
   const fetchUsers = async () => {
     try {
@@ -63,17 +81,17 @@ export const UserManagement: React.FC = () => {
     try {
       await userService.createUser(
         newUser.email,
-        newUser.password,
+        newUser.password, // Include password
         newUser.role,
         newUser.name,
-        newUser.hotelName // Include hotel name when creating a user
+        newUser.hotelName 
       );
       setOpen(false);
       setSuccessMessage('User created successfully');
       fetchUsers();
       setNewUser({
         email: '',
-        password: '',
+        password: '', // Reset password field
         name: '',
         hotelName: '',
         role: 'order_taker',
@@ -86,10 +104,10 @@ export const UserManagement: React.FC = () => {
   const handleDelete = async (userId: string) => {
     try {
       await userService.deleteUser(userId);
-      setSuccessMessage('User deleted successfully');
+      setSuccessMessage("User deleted successfully");
       fetchUsers();
     } catch (err: any) {
-      setError(err.message || 'Failed to delete user');
+      setError(err.message || "Failed to delete user");
     }
   };
 
@@ -107,11 +125,7 @@ export const UserManagement: React.FC = () => {
       <Paper sx={{ p: 2 }}>
         <div className="flex justify-between items-center mb-4">
           <Typography variant="h5">User Management</Typography>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => setOpen(true)}
-          >
+          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpen(true)}>
             Add User
           </Button>
         </div>
@@ -123,28 +137,21 @@ export const UserManagement: React.FC = () => {
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Role</TableCell>
-                <TableCell>Hotel Name</TableCell> {/* Add Hotel Name column */}
+                <TableCell>Hotel Name</TableCell>
                 <TableCell>Created At</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.filter((user) => user.role !== 'admin').map((user) => (
-      
+              {users.filter((user) => user.role !== "admin").map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
-                  <TableCell>{user.hotel || 'N/A'}</TableCell> {/* Show hotel name */}
+                  <TableCell>{user.hotel || "N/A"}</TableCell>
+                  <TableCell>{format(new Date(user.created_at), "dd/MM/yyyy")}</TableCell>
                   <TableCell>
-                    {format(new Date(user.created_at), 'dd/MM/yyyy')}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      startIcon={<DeleteIcon />}
-                      color="error"
-                      onClick={() => handleDelete(user.user_id)}
-                    >
+                    <Button startIcon={<DeleteIcon />} color="error" onClick={() => handleDelete(user.user_id)}>
                       Delete
                     </Button>
                   </TableCell>
@@ -188,30 +195,26 @@ export const UserManagement: React.FC = () => {
               value={newUser.hotelName}
               onChange={(e) => setNewUser({ ...newUser, hotelName: e.target.value })}
             >
-              <MenuItem value="Hotel A">Hotel A</MenuItem>
-              <MenuItem value="Hotel B">Hotel B</MenuItem>
-              <MenuItem value="Hotel C">Hotel C</MenuItem>
+              {hotels.map((hotel) => (
+                <MenuItem key={hotel.id} value={hotel.name}>{hotel.name}</MenuItem>
+              ))}
             </Select>
           </FormControl>
           <FormControl fullWidth margin="dense">
             <InputLabel>Role</InputLabel>
             <Select
               value={newUser.role}
-              onChange={(e) =>
-                setNewUser({ ...newUser, role: e.target.value as User['role'] })
-              }
+              onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
             >
-              <MenuItem value="admin">Admin</MenuItem>
-              <MenuItem value="order_taker">Order Taker</MenuItem>
-              <MenuItem value="order_receiver">Order Receiver</MenuItem>
+              {roles.map((role) => (
+                <MenuItem key={role} value={role}>{role}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained">
-            Add User
-          </Button>
+          <Button onClick={handleSubmit} variant="contained">Add User</Button>
         </DialogActions>
       </Dialog>
     </Container>

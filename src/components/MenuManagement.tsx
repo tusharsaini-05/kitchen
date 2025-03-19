@@ -26,29 +26,31 @@ import LoadingSpinner from './common/LoadingSpinner';
 export const MenuManagement: React.FC = () => {
   const { items, loading, error, addMenuItem, deleteMenuItem } = useMenu();
   const [open, setOpen] = React.useState(false);
+  const [customCategory, setCustomCategory] = React.useState("");
+  const [isCustomCategory, setIsCustomCategory] = React.useState(false);
   const [newItem, setNewItem] = React.useState({
-    nameEn: '',
-    nameTh: '',
+    name_en: '',
+    name_th: '',
     price: 0,
     category: 'main',
   });
 
   const handleSubmit = async () => {
-    if (!newItem.nameEn || !newItem.nameTh || !newItem.price) return;
+    if (!newItem.name_en || !newItem.name_th || !newItem.price) return;
 
     await addMenuItem({
       ...newItem,
       id: Date.now(),
-      nameEn: newItem.nameEn,
-      nameTh: newItem.nameTh,
+      name_en: newItem.name_en,
+      name_th: newItem.name_th,
       price: Number(newItem.price),
       category: newItem.category,
     });
 
     setOpen(false);
     setNewItem({
-      nameEn: '',
-      nameTh: '',
+      name_en: '',
+      name_th: '',
       price: 0,
       category: 'main',
     });
@@ -89,8 +91,8 @@ export const MenuManagement: React.FC = () => {
             <Grid item xs={12} sm={6} md={4} key={item.id}>
               <Card>
                 <CardContent>
-                  <Typography variant="h6">{item.nameEn}</Typography>
-                  <Typography variant="subtitle1">{item.nameTh}</Typography>
+                  <Typography variant="h6">{item.name_en}</Typography>
+                  <Typography variant="subtitle1">{item.name_th}</Typography>
                   <Typography variant="body1" color="text.secondary">
                     Category: {item.category}
                   </Typography>
@@ -118,15 +120,15 @@ export const MenuManagement: React.FC = () => {
             margin="dense"
             label="Name (English)"
             fullWidth
-            value={newItem.nameEn}
-            onChange={(e) => setNewItem({ ...newItem, nameEn: e.target.value })}
+            value={newItem.name_en}
+            onChange={(e) => setNewItem({ ...newItem, name_en: e.target.value })}
           />
           <TextField
             margin="dense"
             label="Name (Thai)"
             fullWidth
-            value={newItem.nameTh}
-            onChange={(e) => setNewItem({ ...newItem, nameTh: e.target.value })}
+            value={newItem.name_th}
+            onChange={(e) => setNewItem({ ...newItem, name_th: e.target.value })}
           />
           <TextField
             margin="dense"
@@ -137,21 +139,45 @@ export const MenuManagement: React.FC = () => {
             onChange={(e) =>
               setNewItem({ ...newItem, price: Number(e.target.value) })
             }
-          />
-          <FormControl fullWidth margin="dense">
-            <InputLabel>Category</InputLabel>
-            <Select
-              value={newItem.category}
-              onChange={(e) =>
-                setNewItem({ ...newItem, category: e.target.value })
-              }
-            >
-              <MuiMenuItem value="main">Main Dishes</MuiMenuItem>
-              <MuiMenuItem value="appetizer">Appetizers</MuiMenuItem>
-              <MuiMenuItem value="dessert">Desserts</MuiMenuItem>
-              <MuiMenuItem value="beverage">Beverages</MuiMenuItem>
-            </Select>
-          </FormControl>
+              />
+<FormControl fullWidth margin="dense">
+  <InputLabel>Category</InputLabel>
+  <Select
+    value={isCustomCategory ? "new" : newItem.category}
+    onChange={(e) => {
+      if (e.target.value === "new") {
+        setIsCustomCategory(true);
+        setCustomCategory(""); // Allow user input
+      } else {
+        setNewItem({ ...newItem, category: e.target.value });
+        setIsCustomCategory(false);
+      }
+    }}
+  >
+    <MuiMenuItem value="main">Main Dishes</MuiMenuItem>
+    <MuiMenuItem value="appetizer">Appetizers</MuiMenuItem>
+    <MuiMenuItem value="dessert">Desserts</MuiMenuItem>
+    <MuiMenuItem value="beverage">Beverages</MuiMenuItem>
+    <MuiMenuItem value="new">➕ Add a new category</MuiMenuItem> {/* New Option */}
+  </Select>
+</FormControl>
+
+{/* Show input field only if "Add a new category" is selected */}
+{isCustomCategory && (
+  <TextField
+    margin="dense"
+    label="Enter New Category"
+    fullWidth
+    value={customCategory}
+    onChange={(e) => setCustomCategory(e.target.value)}
+    onBlur={() => {
+      if (customCategory.trim()) {
+        setNewItem({ ...newItem, category: customCategory.trim() });
+        setIsCustomCategory(false); // Hide input after entering value
+      }
+    }}
+  />
+)}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
