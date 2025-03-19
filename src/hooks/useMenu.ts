@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
 import { MenuItem } from '../types';
-import { storage } from '../config/storage';
-
+import { supabaseStorage } from '../services/storage/supabase';
+export interface MenuIte {
+  id: number;
+  nameEn: string;
+  nameTh: string;
+  price: number;
+  category: string;
+}
 export const useMenu = () => {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +16,7 @@ export const useMenu = () => {
   const loadMenuItems = async () => {
     try {
       setLoading(true);
-      const menuItems = await storage.menu.getItems();
+      const menuItems = await supabaseStorage.menu.getItems();
       setItems(menuItems);
       setError(null);
     } catch (err) {
@@ -27,7 +33,7 @@ export const useMenu = () => {
 
   const addMenuItem = async (item: MenuItem) => {
     try {
-      await storage.menu.saveItem(item);
+      await supabaseStorage.menu.saveItem(item);
       await loadMenuItems();
     } catch (err) {
       setError('Failed to add menu item');
@@ -37,7 +43,7 @@ export const useMenu = () => {
 
   const deleteMenuItem = async (id: number) => {
     try {
-      await storage.menu.deleteItem(id);
+      await supabaseStorage.menu.deleteItem(id);
       await loadMenuItems();
     } catch (err) {
       setError('Failed to delete menu item');

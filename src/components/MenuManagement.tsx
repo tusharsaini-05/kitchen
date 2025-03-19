@@ -29,28 +29,28 @@ export const MenuManagement: React.FC = () => {
   const [customCategory, setCustomCategory] = React.useState("");
   const [isCustomCategory, setIsCustomCategory] = React.useState(false);
   const [newItem, setNewItem] = React.useState({
-    nameEn: '',
-    nameTh: '',
+    name_en: '',
+    name_th: '',
     price: 0,
     category: 'main',
   });
 
   const handleSubmit = async () => {
-    if (!newItem.nameEn || !newItem.nameTh || !newItem.price) return;
+    if (!newItem.name_en || !newItem.name_th || !newItem.price) return;
 
     await addMenuItem({
       ...newItem,
       id: Date.now(),
-      nameEn: newItem.nameEn,
-      nameTh: newItem.nameTh,
+      name_en: newItem.name_en,
+      name_th: newItem.name_th,
       price: Number(newItem.price),
       category: newItem.category,
     });
 
     setOpen(false);
     setNewItem({
-      nameEn: '',
-      nameTh: '',
+      name_en: '',
+      name_th: '',
       price: 0,
       category: 'main',
     });
@@ -91,8 +91,8 @@ export const MenuManagement: React.FC = () => {
             <Grid item xs={12} sm={6} md={4} key={item.id}>
               <Card>
                 <CardContent>
-                  <Typography variant="h6">{item.nameEn}</Typography>
-                  <Typography variant="subtitle1">{item.nameTh}</Typography>
+                  <Typography variant="h6">{item.name_en}</Typography>
+                  <Typography variant="subtitle1">{item.name_th}</Typography>
                   <Typography variant="body1" color="text.secondary">
                     Category: {item.category}
                   </Typography>
@@ -120,15 +120,15 @@ export const MenuManagement: React.FC = () => {
             margin="dense"
             label="Name (English)"
             fullWidth
-            value={newItem.nameEn}
-            onChange={(e) => setNewItem({ ...newItem, nameEn: e.target.value })}
+            value={newItem.name_en}
+            onChange={(e) => setNewItem({ ...newItem, name_en: e.target.value })}
           />
           <TextField
             margin="dense"
             label="Name (Thai)"
             fullWidth
-            value={newItem.nameTh}
-            onChange={(e) => setNewItem({ ...newItem, nameTh: e.target.value })}
+            value={newItem.name_th}
+            onChange={(e) => setNewItem({ ...newItem, name_th: e.target.value })}
           />
           <TextField
             margin="dense"
