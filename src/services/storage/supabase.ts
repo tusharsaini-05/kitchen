@@ -1,3 +1,4 @@
+import { Category } from '@mui/icons-material';
 import { supabase } from '../../config/supabase';
 import { Order, MenuItem } from '../../types';
 import { StorageError } from './errors';
@@ -127,8 +128,11 @@ class SupabaseStorage implements StorageProvider {
       if (!supabase) {
         throw new StorageError('Supabase client not initialized');
       }
-      const { error } = await supabase.from('menu_items').upsert({
-        ...item,
+      const { error } = await supabase.from('menu_items').insert({
+          name_en:item.name_en,
+          name_th:item.name_th,
+          price:item.price,
+          category:item.category,
         created_at: new Date().toISOString()
       });
       if (error) throw error;
