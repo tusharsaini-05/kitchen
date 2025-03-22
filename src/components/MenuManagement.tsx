@@ -26,7 +26,7 @@ import LoadingSpinner from './common/LoadingSpinner';
 export const MenuManagement: React.FC = () => {
   const { items, loading, error, addMenuItem, deleteMenuItem } = useMenu();
   const [open, setOpen] = React.useState(false);
-  const [customCategory, setCustomCategory] = React.useState("");
+  const [customCategory, setCustomCategory] = React.useState('');
   const [isCustomCategory, setIsCustomCategory] = React.useState(false);
   const [newItem, setNewItem] = React.useState({
     name_en: '',
@@ -37,6 +37,11 @@ export const MenuManagement: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!newItem.name_en || !newItem.name_th || !newItem.price) return;
+
+    // Ensure the category is set correctly before submission
+    if (isCustomCategory && customCategory.trim()) {
+      setNewItem((prev) => ({ ...prev, category: customCategory.trim() }));
+    }
 
     await addMenuItem({
       ...newItem,
@@ -54,12 +59,14 @@ export const MenuManagement: React.FC = () => {
       price: 0,
       category: 'main',
     });
+    setCustomCategory(''); // Reset custom category
+    setIsCustomCategory(false); // Reset custom category state
   };
 
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-       <LoadingSpinner/>
+        <LoadingSpinner />
       </Container>
     );
   }
@@ -87,28 +94,29 @@ export const MenuManagement: React.FC = () => {
         </div>
 
         <Grid container spacing={3}>
-          {items && items.map((item) => (
-            <Grid item xs={12} sm={6} md={4} key={item.id}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6">{item.name_en}</Typography>
-                  <Typography variant="subtitle1">{item.name_th}</Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    Category: {item.category}
-                  </Typography>
-                  <Typography variant="h6" color="primary">
-                    {formatCurrency(item.price)}
-                  </Typography>
-                  <IconButton
-                    color="error"
-                    onClick={() => deleteMenuItem(item.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+          {items &&
+            items.map((item) => (
+              <Grid item xs={12} sm={6} md={4} key={item.id}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6">{item.name_en}</Typography>
+                    <Typography variant="subtitle1">{item.name_th}</Typography>
+                    <Typography variant="body1" color="text.secondary">
+                      Category: {item.category}
+                    </Typography>
+                    <Typography variant="h6" color="primary">
+                      {formatCurrency(item.price)}
+                    </Typography>
+                    <IconButton
+                      color="error"
+                      onClick={() => deleteMenuItem(item.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
         </Grid>
       </Paper>
 
@@ -121,14 +129,18 @@ export const MenuManagement: React.FC = () => {
             label="Name (English)"
             fullWidth
             value={newItem.name_en}
-            onChange={(e) => setNewItem({ ...newItem, name_en: e.target.value })}
+            onChange={(e) =>
+              setNewItem({ ...newItem, name_en: e.target.value })
+            }
           />
           <TextField
             margin="dense"
             label="Name (Thai)"
             fullWidth
             value={newItem.name_th}
-            onChange={(e) => setNewItem({ ...newItem, name_th: e.target.value })}
+            onChange={(e) =>
+              setNewItem({ ...newItem, name_th: e.target.value })
+            }
           />
           <TextField
             margin="dense"
@@ -139,45 +151,45 @@ export const MenuManagement: React.FC = () => {
             onChange={(e) =>
               setNewItem({ ...newItem, price: Number(e.target.value) })
             }
-              />
-<FormControl fullWidth margin="dense">
-  <InputLabel>Category</InputLabel>
-  <Select
-    value={isCustomCategory ? "new" : newItem.category}
-    onChange={(e) => {
-      if (e.target.value === "new") {
-        setIsCustomCategory(true);
-        setCustomCategory(""); // Allow user input
-      } else {
-        setNewItem({ ...newItem, category: e.target.value });
-        setIsCustomCategory(false);
-      }
-    }}
-  >
-    <MuiMenuItem value="main">Main Dishes</MuiMenuItem>
-    <MuiMenuItem value="appetizer">Appetizers</MuiMenuItem>
-    <MuiMenuItem value="dessert">Desserts</MuiMenuItem>
-    <MuiMenuItem value="beverage">Beverages</MuiMenuItem>
-    <MuiMenuItem value="new">➕ Add a new category</MuiMenuItem> {/* New Option */}
-  </Select>
-</FormControl>
+          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={isCustomCategory ? 'new' : newItem.category || 'main'}
+              onChange={(e) => {
+                if (e.target.value === 'new') {
+                  setIsCustomCategory(true);
+                  setCustomCategory(''); // Allow user input
+                } else {
+                  setNewItem({ ...newItem, category: e.target.value });
+                  setIsCustomCategory(false);
+                }
+              }}
+            >
+              <MuiMenuItem value="main">Main Dishes</MuiMenuItem>
+              <MuiMenuItem value="appetizer">Appetizers</MuiMenuItem>
+              <MuiMenuItem value="dessert">Desserts</MuiMenuItem>
+              <MuiMenuItem value="beverage">Beverages</MuiMenuItem>
+              <MuiMenuItem value="new">➕ Add a new category</MuiMenuItem>
+            </Select>
+          </FormControl>
 
-{/* Show input field only if "Add a new category" is selected */}
-{isCustomCategory && (
-  <TextField
-    margin="dense"
-    label="Enter New Category"
-    fullWidth
-    value={customCategory}
-    onChange={(e) => setCustomCategory(e.target.value)}
-    onBlur={() => {
-      if (customCategory.trim()) {
-        setNewItem({ ...newItem, category: customCategory.trim() });
-        setIsCustomCategory(false); // Hide input after entering value
-      }
-    }}
-  />
-)}
+          {/* Show input field only if "Add a new category" is selected */}
+          {isCustomCategory && (
+            <TextField
+              margin="dense"
+              label="Enter New Category"
+              fullWidth
+              value={customCategory}
+              onChange={(e) => {
+                setCustomCategory(e.target.value);
+                setNewItem((prev) => ({
+                  ...prev,
+                  category: e.target.value.trim(),
+                }));
+              }}
+            />
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
