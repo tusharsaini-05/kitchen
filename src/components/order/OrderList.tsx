@@ -17,8 +17,8 @@ export const OrderList: React.FC<OrderListProps> = ({
     {items.map((item) => (
       <div key={item.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
         <div>
-          <p className="font-medium">{item.nameEn}</p>
-          <p className="text-sm text-gray-600">{item.nameTh}</p>
+          <p className="font-medium">{item.name_en}</p>
+          <p className="text-sm text-gray-600">{item.name_th}</p>
         </div>
         <div className="flex items-center gap-4">
           <input

@@ -28,8 +28,8 @@ export const OrderTable: React.FC<OrderTableProps> = ({ items, onUpdateQuantity,
             <tr key={item.id} className="border-b">
               <td className="py-2">
                 <div>
-                  <div>{item.nameEn}</div>
-                  <div className="text-sm text-gray-500">{item.nameTh}</div>
+                  <div>{item.name_en}</div>
+                  <div className="text-sm text-gray-500">{item.name_th}</div>
                 </div>
               </td>
               <td className="text-center">
