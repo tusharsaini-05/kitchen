@@ -156,7 +156,7 @@ export const OrderReceiver: React.FC = () => {
                     {order.items.map((item, index) => (
                       <div key={index} className="flex justify-between">
                         <Typography>
-                          {item.nameEn} ({item.nameTh}) x {item.quantity}
+                          {item.name_en} ({item.name_th}) x {item.quantity}
                         </Typography>
                         <Typography>
                           {formatCurrency(item.price * item.quantity)}

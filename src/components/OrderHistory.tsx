@@ -29,7 +29,7 @@ export const OrderHistory: React.FC = () => {
       ...orders.map(order => [
         order.id,
         format(new Date(order.timestamp), 'yyyy-MM-dd HH:mm:ss'),
-        order.items.map(item => `${item.nameEn} x${item.quantity}`).join(', '),
+        order.items.map(item => `${item.name_en} x${item.quantity}`).join(', '),
         order.total
       ])
     ].map(row => row.join(',')).join('\n');
@@ -76,7 +76,7 @@ export const OrderHistory: React.FC = () => {
               <tr key={order.id} className="border-b">
                 <td className="py-2">{order.id}</td>
                 <td>{format(new Date(order.timestamp), 'yyyy-MM-dd HH:mm:ss')}</td>
-                <td>{order.items.map(item => `${item.nameEn} x${item.quantity}`).join(', ')}</td>
+                <td>{order.items.map(item => `${item.name_en} x${item.quantity}`).join(', ')}</td>
                 <td className="text-right">${order.total}</td>
               </tr>
             ))}

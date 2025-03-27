@@ -1,21 +1,21 @@
 import { MenuItem } from '../../types';
-import { storageService } from '../storage';
+import { supabaseStorage } from '../storage/supabase';
 
 class MenuService {
   async getMenuItems(): Promise<MenuItem[]> {
-    return storageService.menu.getItems();
+    return supabaseStorage.menu.getItems();
   }
 
   async addMenuItem(item: MenuItem): Promise<void> {
-    return storageService.menu.saveItem(item);
+    return supabaseStorage.menu.saveItem(item);
   }
 
   async updateMenuItem(item: MenuItem): Promise<void> {
-    return storageService.menu.saveItem(item);
+    return supabaseStorage.menu.saveItem(item);
   }
 
   async deleteMenuItem(id: number): Promise<void> {
-    return storageService.menu.deleteItem(id);
+    return supabaseStorage.menu.deleteItem(id);
   }
 }
 

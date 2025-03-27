@@ -21,7 +21,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
       <div className="space-y-2 mb-4">
         {items.map((item) => (
           <div key={item.id} className="flex justify-between">
-            <span>{item.nameEn} x{item.quantity}</span>
+            <span>{item.name_en} x{item.quantity}</span>
             <span>{formatCurrency(item.price * item.quantity)}</span>
           </div>
         ))}

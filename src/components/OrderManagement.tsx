@@ -166,7 +166,7 @@ export const OrderManagement: React.FC = () => {
                     <TableCell>
                       {order.items.map((item, idx) => (
                         <div key={idx}>
-                          {item.nameEn} ({item.nameTh}) x{item.quantity}
+                          {item.name_en} ({item.name_th}) x{item.quantity}
                         </div>
                       ))}
                     </TableCell>

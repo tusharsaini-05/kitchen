@@ -17,7 +17,7 @@ import { OrderList } from "./order/OrderList";
 import { OrderSummary } from "./order/OrderSummary";
 import LoadingSpinner from "./common/LoadingSpinner";
 import { ErrorMessage } from "./common/ErrorMessage";
-
+import { supabaseStorage } from "../services/storage/supabase";
 export const OrderSystem: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
@@ -31,7 +31,7 @@ export const OrderSystem: React.FC = () => {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const items = await menuService.getMenuItems();
+        const items = await supabaseStorage.menu.getItems()
         setMenuItems(items);
       } catch (err) {
         setError("Failed to load menu items");
@@ -43,7 +43,7 @@ export const OrderSystem: React.FC = () => {
 
     fetchMenuItems();
   }, []);
-
+  console.log(menuItems)
   const handleAddItem = (item: MenuItem) => {
     setOrderItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
