@@ -236,9 +236,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Inspired by modern kitchen management workflows
 - Tailwind CSS for rapid UI development
 
-## 📞 Support
-
-For support, email tusharsaini.dev@gmail.com or create an issue in the GitHub repository.
 
 ---
 
